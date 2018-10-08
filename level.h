@@ -27,7 +27,8 @@ enum tile_type {
 };
 
 struct tile {
-	enum tile_type type;
+	enum tile_type	 type;
+	struct creature	*creature;
 };
 
 enum level_type {

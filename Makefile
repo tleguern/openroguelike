@@ -14,11 +14,11 @@ CFLAGS+= -Wall -Wextra -Wno-unused-function
 ${PROG}: ${OBJS}
 	${CC} ${LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
-game.c: ui.h level.h
+game.c: creature.h level.h ui.h
 ui.c: ui.h
 cave.c: level.h
-level.c: level.h
-player.c: ui.h level.h player.h
+level.c: creature.h level.h
+creature.c: creature.h level.h ui.h
 
 clean:
 	rm -f -- ${PROG} ${OBJS}

@@ -55,8 +55,6 @@ ui_draw(struct level *l)
 	werase(stdscr);
 	/* draw main screen */
 	level_draw(l);
-	//mvwaddch(stdscr, p.y, p.x, '@' | COLOR_PAIR(2));
-	//mvwaddch(stdscr, g.y, g.x, 'g' | COLOR_PAIR(5));
 	wnoutrefresh(stdscr);
 	/* draw message screen */
 	wnoutrefresh(messagewin);

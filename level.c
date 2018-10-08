@@ -18,10 +18,11 @@
 #include <curses.h>
 
 #include "level.h"
+#include "creature.h"
 
 bool
 tile_is_empty(struct tile *t) {
-	if (T_EMPTY == t->type)
+	if (T_EMPTY == t->type && NULL == t->creature)
 		return(true);
 	return(false);
 }
@@ -45,6 +46,9 @@ tile_print(struct tile *t, int x, int y) {
         default:
                 break;
         }
+	if (NULL != t->creature) {
+		mvaddch(y, x, t->creature->glyphe);
+	}
 }
 
 void
@@ -63,6 +67,7 @@ level_init(struct level *l) {
 	for (int y = 0; y < MAXROWS; y++) {
 		for (u_int x = 0; x < MAXCOLS; x++) {
 			l->tile[y][x].type = T_EMPTY;
+			l->tile[y][x].creature = NULL;
 		}
 	}
 }

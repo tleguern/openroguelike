@@ -6,10 +6,11 @@
 #include <curses.h>
 
 #include "level.h"
-#include "player.h"
 #include "ui.h"
+#include "creature.h"
 
-struct player p;
+struct creature p;
+struct creature g;
 struct level l;
 
 int
@@ -30,34 +31,35 @@ main(void)
 	c = -1;
 	level_init(&l);
 	cave_gen(&l);
-	player_init(&p, &l);
+	creature_init(&p, &l, R_HUMAN);
+	creature_init(&g, &l, R_GOBLIN);
 	do {
 		ui_draw(&l);
 		c = wgetch(stdscr);
 		switch (c) {
 		case 'h':
-			player_move_left(&p, &l);
+			creature_move_left(&p, &l);
 			break;
 		case 'j':
-			player_move_down(&p, &l);
+			creature_move_down(&p, &l);
 			break;
 		case 'k':
-			player_move_up(&p, &l);
+			creature_move_up(&p, &l);
 			break;
 		case 'l':
-			player_move_right(&p, &l);
+			creature_move_right(&p, &l);
 			break;
 		case 'y':
-			player_move_upleft(&p, &l);
+			creature_move_upleft(&p, &l);
 			break;
 		case 'u':
-			player_move_upright(&p, &l);
+			creature_move_upright(&p, &l);
 			break;
 		case 'b':
-			player_move_downleft(&p, &l);
+			creature_move_downleft(&p, &l);
 			break;
 		case 'n':
-			player_move_downright(&p, &l);
+			creature_move_downright(&p, &l);
 			break;
 		case 'O':
 			ui_menu_options();
