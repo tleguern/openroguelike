@@ -75,8 +75,7 @@ ui_init(void)
 	meta(stdscr, TRUE);
 	if (has_colors() == FALSE)
 		return;
-	if (optionsmap[O_COLORS].value == true)
-		ui_reset_colors();
+	ui_reset_colors();
 }
 
 void
@@ -177,10 +176,19 @@ ui_reset_colors(void)
 {
 	start_color();
 	/* Don't bother calling can_change_color() */
-	init_pair(1, COLOR_WHITE, COLOR_BLACK);
-	init_pair(2, COLOR_BLACK, COLOR_WHITE);
-	init_pair(3, COLOR_RED, COLOR_WHITE);
-	init_pair(4, COLOR_BLACK, COLOR_CYAN);
-	init_pair(5, COLOR_GREEN, COLOR_BLACK);
+	if (optionsmap[O_COLORS].value == true) {
+		init_pair(1, COLOR_WHITE, COLOR_BLACK);
+		init_pair(2, COLOR_BLACK, COLOR_WHITE);
+		init_pair(3, COLOR_RED, COLOR_WHITE);
+		init_pair(4, COLOR_BLACK, COLOR_CYAN);
+		init_pair(5, COLOR_GREEN, COLOR_BLACK);
+	} else {
+		init_pair(1, COLOR_WHITE, COLOR_BLACK);
+		init_pair(2, COLOR_WHITE, COLOR_BLACK);
+		init_pair(3, COLOR_WHITE, COLOR_BLACK);
+		init_pair(4, COLOR_WHITE, COLOR_BLACK);
+		init_pair(5, COLOR_WHITE, COLOR_BLACK);
+	}
+	redrawwin(stdscr);
 }
 
