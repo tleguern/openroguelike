@@ -1,2 +1,3 @@
 *.o
 roguelike
+*.core
