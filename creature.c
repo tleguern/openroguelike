@@ -28,19 +28,7 @@ static void goblin_init(struct creature *);
 void
 creature_init(struct creature *c, struct level *l, enum race race)
 {
-	int y, x;
-
-	do {
-		y = rng_rand_uniform(MAXROWS);
-		x = rng_rand_uniform(MAXCOLS);
-		if (tile_is_empty(&(l->tile[y][x]))) {
-			c->x = x;
-			c->y = y;
-			l->tile[y][x].creature = c;
-			break;
-		}
-	} while (1);
-
+	creature_place_randomly(c, l);
 	c->race = race;
 	switch (race) {
 	case R_HUMAN:
@@ -53,6 +41,23 @@ creature_init(struct creature *c, struct level *l, enum race race)
 	default:
 		return; /* XXX error in some way */
 	}
+}
+
+void
+creature_place_randomly(struct creature *c, struct level *l)
+{
+	int y, x;
+
+	do {
+		y = rng_rand_uniform(MAXROWS);
+		x = rng_rand_uniform(MAXCOLS);
+		if (tile_is_empty(&(l->tile[y][x]))) {
+			c->x = x;
+			c->y = y;
+			l->tile[y][x].creature = c;
+			break;
+		}
+	} while (1);
 }
 
 void

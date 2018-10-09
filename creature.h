@@ -40,6 +40,7 @@ void creature_move_downleft(struct creature *, struct level *);
 void creature_move_upright(struct creature *, struct level *);
 void creature_move_downright(struct creature *, struct level *);
 void creature_init(struct creature *, struct level *, enum race);
+void creature_place_randomly(struct creature *, struct level *);
 
 #endif
 

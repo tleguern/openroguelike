@@ -17,7 +17,7 @@ ${PROG}: ${OBJS}
 game.c: creature.h level.h ui.h rng.h
 ui.c: ui.h
 cave.c: level.h rng.h
-level.c: creature.h level.h
+level.c: creature.h level.h rng.h
 creature.c: creature.h level.h ui.h rng.h
 rng.c: rng.h
 

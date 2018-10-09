@@ -23,6 +23,8 @@
 enum tile_type {
 	T_EMPTY,
 	T_WALL,
+	T_UPSTAIR,
+	T_DOWNSTAIR,
 	T__MAX,
 };
 
@@ -42,6 +44,12 @@ struct level {
 	struct tile	tile[MAXROWS][MAXCOLS];
 };
 
+struct world {
+	int32_t		  levelsz;
+	int32_t	  	  current;
+	struct level	**levels;
+};
+
 bool tile_is_empty(struct tile *);
 bool tile_is_wall(struct tile *);
 void tile_print(struct tile *, int, int);
@@ -50,5 +58,12 @@ void level_init(struct level *);
 void level_draw(struct level *);
 
 void cave_gen(struct level *);
+
+void world_init(struct world *);
+void world_add(struct world *, struct level *);
+void world_free(struct world *);
+struct level *world_first(struct world *);
+struct level *world_prev(struct world *);
+struct level *world_next(struct world *);
 
 #endif

@@ -15,14 +15,19 @@
  */
 
 #include <stdbool.h>
+#include <stdlib.h>
 #include <curses.h>
 
 #include "level.h"
 #include "creature.h"
+#include "rng.h"
+
+static void level_add_stair(struct level *, bool);
 
 bool
 tile_is_empty(struct tile *t) {
-	if (T_EMPTY == t->type && NULL == t->creature)
+	if ((T_EMPTY == t->type || T_UPSTAIR == t->type
+	    || T_DOWNSTAIR == t->type) && NULL == t->creature)
 		return(true);
 	return(false);
 }
@@ -36,16 +41,22 @@ tile_is_wall(struct tile *t) {
 
 void
 tile_print(struct tile *t, int x, int y) {
-        switch (t->type) {
-        case T_EMPTY:
-                mvaddch(y, x, ' ');
-                break;
-        case T_WALL:
-                mvaddch(y, x, ACS_BLOCK);
-                break;
-        default:
-                break;
-        }
+	switch (t->type) {
+	case T_EMPTY:
+		mvaddch(y, x, ' ');
+		break;
+	case T_WALL:
+		mvaddch(y, x, ACS_BLOCK);
+		break;
+	case T_UPSTAIR:
+		mvaddch(y, x, '>');
+		break;
+	case T_DOWNSTAIR:
+		mvaddch(y, x, '<');
+		break;
+	default:
+		break;
+	}
 	if (NULL != t->creature) {
 		mvaddch(y, x, t->creature->glyphe);
 	}
@@ -70,5 +81,88 @@ level_init(struct level *l) {
 			l->tile[y][x].creature = NULL;
 		}
 	}
+}
+
+static void
+level_add_stair(struct level *l, bool up)
+{
+	int y, x;
+
+	do {
+		y = rng_rand_uniform(MAXROWS);
+		x = rng_rand_uniform(MAXCOLS);
+		if (tile_is_empty(&(l->tile[y][x]))) {
+			if (up)
+				l->tile[y][x].type = T_UPSTAIR;
+			else
+				l->tile[y][x].type = T_DOWNSTAIR;
+			break;
+		}
+	} while (1);
+}
+
+void
+world_init(struct world *w)
+{
+	w->current = 0;
+	w->levelsz = 3;
+	w->levels = calloc(w->levelsz, sizeof(struct level *));
+	for (int32_t i = 0; i < w->levelsz; i++) {
+		w->levels[i] = calloc(1, sizeof(struct level));
+		level_init(w->levels[i]);
+		cave_gen(w->levels[i]);
+		if (i < w->levelsz - 1)
+			level_add_stair(w->levels[i], true);
+		if (i > 0)
+			level_add_stair(w->levels[i], false);
+		world_add(w, w->levels[i]);
+	}
+}
+
+void
+world_add(struct world *w, struct level *l)
+{
+	for (int32_t i = 0; i < w->levelsz; i++) {
+		if (w->levels[i] == NULL) {
+			w->levels[i] = l;
+			break;
+		}
+	}
+}
+
+struct level *
+world_first(struct world *w)
+{
+	w->current = 0;
+	return w->levels[0];
+}
+
+struct level *
+world_next(struct world *w)
+{
+	if (w->current + 1 < w->levelsz)
+		w->current += 1;
+	return w->levels[w->current];
+}
+
+struct level *
+world_prev(struct world *w)
+{
+	if (w->current - 1 >= 0)
+		w->current -= 1;
+	return w->levels[w->current];
+}
+
+void
+world_free(struct world *w)
+{
+	for (int32_t i = 0; i < w->levelsz; i++) {
+		free(w->levels[i]);
+		w->levels[i] = NULL;
+	}
+	free(w->levels);
+	w->levels = NULL;
+	w->levelsz = 0;
+	w->current = -1;
 }
 
