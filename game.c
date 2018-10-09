@@ -90,14 +90,14 @@ main(int argc, char *argv[])
 			if (lp->tile[p.y][p.x].type == T_UPSTAIR) {
 				lp->tile[p.y][p.x].creature = NULL;
 				lp = world_next(&w);
-				creature_place_randomly(&p, lp);
+				creature_place_at_stair(&p, lp, false);
 			}
 			break;
 		case '<':
 			if (lp->tile[p.y][p.x].type == T_DOWNSTAIR) {
 				lp->tile[p.y][p.x].creature = NULL;
 				lp = world_prev(&w);
-				creature_place_randomly(&p, lp);
+				creature_place_at_stair(&p, lp, true);
 			}
 			break;
 		case 'O':

@@ -61,6 +61,22 @@ creature_place_randomly(struct creature *c, struct level *l)
 }
 
 void
+creature_place_at_stair(struct creature *c, struct level *l, bool up)
+{
+	int y, x;
+
+	for (y = 0; y < MAXROWS; ++y)
+		for (x = 0; x < MAXCOLS; ++x)
+			if ((l->tile[y][x].type == T_UPSTAIR && up)
+			    || (l->tile[y][x].type == T_DOWNSTAIR && !up)) {
+				c->x = x;
+				c->y = y;
+				l->tile[y][x].creature = c;
+				return;
+			}
+}
+
+void
 creature_move(struct creature *c, struct level *l, int row, int col)
 {
 	if (c->y + row < 0 || c->y + row >= LINES) {
