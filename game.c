@@ -22,6 +22,7 @@ int
 main(int argc, char *argv[])
 {
 	int		 c, ch;
+	uint32_t	 time;
 	uint32_t	 seed;
 	const char	*errstr;
 	struct level	*lp;
@@ -54,11 +55,14 @@ main(int argc, char *argv[])
 	}
 
 	c = -1;
+	time = 0;
 	world_init(&w);
 	lp = world_first(&w);
 	creature_init(&p, lp, R_HUMAN);
 	creature_init(&g, lp, R_GOBLIN);
 	do {
+		int noaction = 0;
+
 		ui_draw(lp);
 		c = wgetch(stdscr);
 		switch (c) {
@@ -102,10 +106,16 @@ main(int argc, char *argv[])
 			break;
 		case 'O':
 			ui_menu_options();
+			noaction = 1;
 			break;
 		default:
+			noaction = 1;
 			break;
 		}
+		if (noaction == 1)
+			continue;
+		/* Monsters' turn */
+		creature_do_something(&g, world_first(&w));
 	} while (1);
 	world_free(&w);
 	ui_cleanup();

@@ -147,6 +147,40 @@ creature_move_downright(struct creature *c, struct level* l)
 	creature_move(c, l, 1, 1);
 }
 
+void
+creature_do_something(struct creature *c, struct level *l)
+{
+	uint32_t choice;
+
+	choice = rng_rand_uniform(8);
+	switch (choice) {
+	case 0:
+		creature_move_left(c, l);
+		break;
+	case 1:
+		creature_move_down(c, l);
+		break;
+	case 2:
+		creature_move_up(c, l);
+		break;
+	case 3:
+		creature_move_right(c, l);
+		break;
+	case 4:
+		creature_move_upleft(c, l);
+		break;
+	case 5:
+		creature_move_downleft(c, l);
+		break;
+	case 6:
+		creature_move_upright(c, l);
+		break;
+	case 7:
+		creature_move_downright(c, l);
+		break;
+	}
+}
+
 static void
 human_init(struct creature *c)
 {

@@ -42,6 +42,7 @@ void creature_move_downright(struct creature *, struct level *);
 void creature_init(struct creature *, struct level *, enum race);
 void creature_place_randomly(struct creature *, struct level *);
 void creature_place_at_stair(struct creature *, struct level *, bool);
+void creature_do_something(struct creature *, struct level *);
 
 #endif
 

@@ -133,7 +133,6 @@ world_add(struct world *w, struct level *l)
 struct level *
 world_first(struct world *w)
 {
-	w->current = 0;
 	return w->levels[0];
 }
 
