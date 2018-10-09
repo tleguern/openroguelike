@@ -104,6 +104,9 @@ main(int argc, char *argv[])
 				creature_place_at_stair(&p, lp, true);
 			}
 			break;
+		case '.':
+			/* rest */
+			break;
 		case 'O':
 			ui_menu_options();
 			noaction = 1;
