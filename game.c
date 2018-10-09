@@ -1,23 +1,47 @@
-#include <stdlib.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdarg.h>
 #include <curses.h>
+#include <err.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "level.h"
 #include "ui.h"
 #include "creature.h"
+#include "rng.h"
+
+static void usage(void);
 
 struct creature p;
 struct creature g;
 struct level l;
 
 int
-main(void)
+main(int argc, char *argv[])
 {
-	int c;
+	int		 c, ch;
+	uint32_t	 seed;
+	const char	*errstr;
 
+	while ((ch = getopt(argc, argv, "s:")) != -1) {
+		switch (ch) {
+		case 's':
+			seed = strtonum(optarg, 0, UINT32_MAX, &errstr);
+			if (errstr != NULL) {
+				errx(1, "invalid seed value");
+			}
+			rng_set_seed(seed);
+			break;
+		default:
+			usage();
+		}
+	}
+	argc -= optind;
+	argv += optind;
+
+	rng_init();
 	ui_init();
 	ui_message("Welcome to the cave of the Goblin King");
 	/* Check for 23 because of ripoffline */
@@ -70,5 +94,12 @@ main(void)
 	} while (1);
 	ui_cleanup();
 	return(0);
+}
+
+static void
+usage(void)
+{
+	fprintf(stderr, "usage: %s [-s seed]\n", getprogname());
+	exit(1);
 }
 

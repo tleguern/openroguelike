@@ -23,6 +23,7 @@
 #include <unistd.h>
 
 #include "level.h"
+#include "rng.h"
 
 /* Cave specific options */
 static int cave_step = 3; /* Number of calls to cave_reduce_noise */
@@ -90,7 +91,7 @@ cave_init(struct level *l) {
 
 static enum tile_type
 rand_pick(unsigned int ratio) {
-	unsigned int x = arc4random_uniform(100);
+	unsigned int x = rng_rand_uniform(100);
 	return (x < ratio) ? T_WALL : T_EMPTY;
 }
 

@@ -20,6 +20,7 @@
 #include "level.h"
 #include "ui.h"
 #include "creature.h"
+#include "rng.h"
 
 static void human_init(struct creature *);
 static void goblin_init(struct creature *);
@@ -30,8 +31,8 @@ creature_init(struct creature *c, struct level *l, enum race race)
 	int y, x;
 
 	do {
-		y = arc4random_uniform(MAXROWS);
-		x = arc4random_uniform(MAXCOLS);
+		y = rng_rand_uniform(MAXROWS);
+		x = rng_rand_uniform(MAXCOLS);
 		if (tile_is_empty(&(l->tile[y][x]))) {
 			c->x = x;
 			c->y = y;
