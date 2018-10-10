@@ -65,5 +65,6 @@ void world_free(struct world *);
 struct level *world_first(struct world *);
 struct level *world_prev(struct world *);
 struct level *world_next(struct world *);
+struct level *world_current(struct world *);
 
 #endif

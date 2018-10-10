@@ -76,75 +76,103 @@ creature_place_at_stair(struct creature *c, struct level *l, bool up)
 			}
 }
 
-void
+int
 creature_move(struct creature *c, struct level *l, int row, int col)
 {
 	if (c->y + row < 0 || c->y + row >= LINES) {
-		return;
+		return(-1);
 	}
 	if (c->x + col < 0 || c->x + col >= COLS) {
-		return;
+		return(-1);
 	}
 	if (tile_is_wall(&(l->tile[c->y + row][c->x + col]))) {
-		ui_message("You bumped into a wall");
-		return;
+		return(-1);
 	}
 	if (tile_is_empty(&(l->tile[c->y + row][c->x + col])) == false) {
-		ui_message("You bumped into something");
-		return;
+		return(-1);
 	}
 	l->tile[c->y][c->x].creature = NULL;
 	c->y += row;
 	c->x += col;
 	l->tile[c->y][c->x].creature = c;
+	return(0);
 }
 
-void
+int
 creature_move_left(struct creature *c, struct level* l)
 {
-	creature_move(c, l, 0, -1);
+	return(creature_move(c, l, 0, -1));
 }
 
-void
+int
 creature_move_down(struct creature *c, struct level* l)
 {
-	creature_move(c, l, 1, 0);
+	return(creature_move(c, l, 1, 0));
 }
 
-void
+int
 creature_move_up(struct creature *c, struct level* l)
 {
-	creature_move(c, l, -1, 0);
+	return(creature_move(c, l, -1, 0));
 }
 
-void
+int
 creature_move_right(struct creature *c, struct level* l)
 {
-	creature_move(c, l, 0, 1);
+	return(creature_move(c, l, 0, 1));
 }
 
-void
+int
 creature_move_upleft(struct creature *c, struct level* l)
 {
-	creature_move(c, l, -1, -1);
+	return(creature_move(c, l, -1, -1));
 }
 
-void
+int
 creature_move_downleft(struct creature *c, struct level* l)
 {
-	creature_move(c, l, 1, -1);
+	return(creature_move(c, l, 1, -1));
 }
 
-void
+int
 creature_move_upright(struct creature *c, struct level* l)
 {
-	creature_move(c, l, -1, 1);
+	return(creature_move(c, l, -1, 1));
 }
 
-void
+int
 creature_move_downright(struct creature *c, struct level* l)
 {
-	creature_move(c, l, 1, 1);
+	return(creature_move(c, l, 1, 1));
+}
+
+int
+creature_climb_upstair(struct creature *c, struct level *f, struct level *t)
+{
+	if (f->tile[c->y][c->x].type != T_UPSTAIR) {
+		return(-1);
+	}
+	f->tile[c->y][c->x].creature = NULL;
+	creature_place_at_stair(c, t, false);
+	return(0);
+}
+
+int
+creature_climb_downstair(struct creature *c, struct level *f, struct level *t)
+{
+	if (f->tile[c->y][c->x].type != T_DOWNSTAIR) {
+		return(-1);
+	}
+	f->tile[c->y][c->x].creature = NULL;
+	creature_place_at_stair(c, t, true);
+	return(0);
+}
+
+int
+creature_rest(struct creature *c)
+{
+	(void)c;
+	return(0);
 }
 
 void

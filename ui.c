@@ -18,6 +18,7 @@
 #include <string.h>
 #include <curses.h>
 
+#include "creature.h"
 #include "level.h"
 #include "ui.h"
 
@@ -40,6 +41,24 @@ struct optionsmap {
 
 struct optionsmap optionsmap[] = {
 	{"colors", false, ui_reset_colors},
+};
+
+struct keybindingsmap keybindingsmap[] = {
+	{"enter",	'\r'},
+	{"escape",	27}, /* Escape key*/
+	{"left",	'h'},
+	{"down",	'j'},
+	{"up",		'k'},
+	{"right",	'l'},
+	{"upleft",	'y'},
+	{"upright",	'u'},
+	{"downleft",	'b'},
+	{"downright",	'n'},
+	{"rest",	'.'},
+	{"upstair",	'>'},
+	{"downstair",	'<'},
+	{"show help menu", '?'},
+	{"show options menu", 'O'},
 };
 
 void
@@ -76,6 +95,7 @@ ui_init(void)
 	if (has_colors() == FALSE)
 		return;
 	ui_reset_colors();
+	redrawwin(stdscr);
 }
 
 void
@@ -92,6 +112,8 @@ ui_menu_options(void)
 	ui_message("Options menu");
 	mvwaddstr(menuwin, 0, 1, "[OPTIONS]");
 	do {
+		int key = -1;
+
 		for (int i = 0; i < O__MAX; i++) {
 			char cursor, x;
 
@@ -105,22 +127,27 @@ ui_menu_options(void)
 			    cursor, x, optionsmap[i].name);
 		}
 		wrefresh(menuwin);
-		switch (wgetch(menuwin)) {
-		case 'k':
+		key = ui_keybinding_get(wgetch(menuwin));
+		if (key == K__MAX) {
+			continue;
+		}
+		switch (key) {
+		case K_UP:
 			if (hl == 0)
 				break;
 			hl -= 1;
 			break;
-		case 'j':
+		case K_DOWN:
 			if (hl == O__MAX - 1)
 				break;
 			hl += 1;
 			break;
-		case '\r':
+		case K_ENTER:
 			optionsmap[hl].value = !optionsmap[hl].value;
 			optionsmap[hl].func();
+			redrawwin(menuwin); /* XXX: Hum */
 			break;
-		case 27: /* Escape */
+		case K_ESCAPE:
 			exit = 1;
 			break;
 		default:
@@ -130,6 +157,46 @@ ui_menu_options(void)
 			break;
 	} while (1);
 	delwin(menuwin);
+}
+
+void
+ui_menu_help(void)
+{
+	int exit, nonconfigurablekeys;
+	WINDOW *helpwin;
+
+	exit = -1;
+	nonconfigurablekeys = 2;
+	helpwin = newwin(K__MAX - nonconfigurablekeys + 2, \
+	    40, LINES / 2, COLS / 2 - 20);
+	wbkgd(helpwin, ' ' | COLOR_PAIR(4));
+	box(helpwin, 0, 0);
+	ui_message("Help menu");
+	mvwaddstr(helpwin, 0, 1, "[HELP]");
+	do {
+		int key = -1;
+
+		for (int i = 2; i < K__MAX; i++) {
+			mvwprintw(helpwin, i - nonconfigurablekeys + 1, 1, "%c %s", \
+			    keybindingsmap[i].key, keybindingsmap[i].name);
+		}
+		mvwprintw(helpwin, K__MAX + 1, 1, "Escape to quit this menu");
+		wrefresh(helpwin);
+		key = ui_keybinding_get(wgetch(helpwin));
+		if (key == K__MAX) {
+			continue;
+		}
+		switch (key) {
+		case K_ESCAPE:
+			exit = 1;
+			break;
+		default:
+			break;
+		}
+		if (exit != -1)
+			break;
+	} while (1);
+	delwin(helpwin);
 }
 
 void
@@ -174,6 +241,7 @@ ui_set_message_window(WINDOW *win, int ncols)
 static void
 ui_reset_colors(void)
 {
+	ui_message("ui_reset_colors");
 	start_color();
 	/* Don't bother calling can_change_color() */
 	if (optionsmap[O_COLORS].value == true) {
@@ -189,6 +257,17 @@ ui_reset_colors(void)
 		init_pair(4, COLOR_WHITE, COLOR_BLACK);
 		init_pair(5, COLOR_WHITE, COLOR_BLACK);
 	}
-	redrawwin(stdscr);
+}
+
+enum keybindings
+ui_keybinding_get(int keypress)
+{
+	int key;
+
+	for (key = 0; key < K__MAX; key++) {
+		if (keypress == keybindingsmap[key].key)
+			break;
+	}
+	return(key);
 }
 

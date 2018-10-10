@@ -21,7 +21,7 @@ struct world w;
 int
 main(int argc, char *argv[])
 {
-	int		 c, ch;
+	int		 ch;
 	uint32_t	 time;
 	uint32_t	 seed;
 	const char	*errstr;
@@ -54,68 +54,69 @@ main(int argc, char *argv[])
 		return(1);
 	}
 
-	c = -1;
 	time = 0;
 	world_init(&w);
 	lp = world_first(&w);
 	creature_init(&p, lp, R_HUMAN);
 	creature_init(&g, lp, R_GOBLIN);
 	do {
+		int key = -1;
 		int noaction = 0;
 
 		ui_draw(lp);
-		c = wgetch(stdscr);
-		switch (c) {
-		case 'h':
-			creature_move_left(&p, lp);
+		key = ui_keybinding_get(wgetch(stdscr));
+		if (key == K__MAX) {
+			continue;
+		}
+		switch (key) {
+		case K_LEFT:
+			noaction = creature_move_left(&p, lp);
 			break;
-		case 'j':
-			creature_move_down(&p, lp);
+		case K_DOWN:
+			noaction = creature_move_down(&p, lp);
 			break;
-		case 'k':
-			creature_move_up(&p, lp);
+		case K_UP:
+			noaction = creature_move_up(&p, lp);
 			break;
-		case 'l':
-			creature_move_right(&p, lp);
+		case K_RIGHT:
+			noaction = creature_move_right(&p, lp);
 			break;
-		case 'y':
-			creature_move_upleft(&p, lp);
+		case K_UPLEFT:
+			noaction = creature_move_upleft(&p, lp);
 			break;
-		case 'u':
-			creature_move_upright(&p, lp);
+		case K_UPRIGHT:
+			noaction = creature_move_upright(&p, lp);
 			break;
-		case 'b':
-			creature_move_downleft(&p, lp);
+		case K_DOWNLEFT:
+			noaction = creature_move_downleft(&p, lp);
 			break;
-		case 'n':
-			creature_move_downright(&p, lp);
+		case K_DOWNRIGHT:
+			noaction = creature_move_downright(&p, lp);
 			break;
-		case '>':
-			if (lp->tile[p.y][p.x].type == T_UPSTAIR) {
-				lp->tile[p.y][p.x].creature = NULL;
-				lp = world_next(&w);
-				creature_place_at_stair(&p, lp, false);
-			}
+		case K_UPSTAIR:
+			noaction = creature_climb_upstair(&p, lp, world_next(&w));
+			lp = world_current(&w);
 			break;
-		case '<':
-			if (lp->tile[p.y][p.x].type == T_DOWNSTAIR) {
-				lp->tile[p.y][p.x].creature = NULL;
-				lp = world_prev(&w);
-				creature_place_at_stair(&p, lp, true);
-			}
+		case K_DOWNSTAIR:
+			noaction = creature_climb_downstair(&p, lp, world_prev(&w));
+			lp = world_current(&w);
 			break;
-		case '.':
-			/* rest */
+		case K_REST:
+			noaction = creature_rest(&p);
 			break;
-		case 'O':
+		case K_OPTIONMENU:
 			ui_menu_options();
-			noaction = 1;
+			noaction = -1;
+			break;
+		case K_HELPMENU:
+			ui_menu_help();
+			noaction = -1;
 			break;
 		default:
-			noaction = 1;
+			noaction = -1;
 			break;
 		}
-		if (noaction == 1)
+		if (noaction == -1)
 			continue;
 		/* Monsters' turn */
 		creature_do_something(&g, world_first(&w));

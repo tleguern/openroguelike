@@ -141,7 +141,7 @@ world_next(struct world *w)
 {
 	if (w->current + 1 < w->levelsz)
 		w->current += 1;
-	return w->levels[w->current];
+	return world_current(w);
 }
 
 struct level *
@@ -149,6 +149,12 @@ world_prev(struct world *w)
 {
 	if (w->current - 1 >= 0)
 		w->current -= 1;
+	return world_current(w);
+}
+
+struct level *
+world_current(struct world *w)
+{
 	return w->levels[w->current];
 }
 

@@ -17,6 +17,8 @@
 #ifndef CREATURE_H__
 #define CREATURE_H__
 
+struct level;
+
 enum race {
 	R_HUMAN,
 	R_GOBLIN,
@@ -30,15 +32,18 @@ struct creature {
 	enum race race;
 };
 
-void creature_move(struct creature *, struct level *, int, int);
-void creature_move_left(struct creature *, struct level *);
-void creature_move_down(struct creature *, struct level *);
-void creature_move_up(struct creature *, struct level *);
-void creature_move_right(struct creature *, struct level *);
-void creature_move_upleft(struct creature *, struct level *);
-void creature_move_downleft(struct creature *, struct level *);
-void creature_move_upright(struct creature *, struct level *);
-void creature_move_downright(struct creature *, struct level *);
+int creature_move(struct creature *, struct level *, int, int);
+int creature_move_left(struct creature *, struct level *);
+int creature_move_down(struct creature *, struct level *);
+int creature_move_up(struct creature *, struct level *);
+int creature_move_right(struct creature *, struct level *);
+int creature_move_upleft(struct creature *, struct level *);
+int creature_move_downleft(struct creature *, struct level *);
+int creature_move_upright(struct creature *, struct level *);
+int creature_move_downright(struct creature *, struct level *);
+int creature_climb_upstair(struct creature *, struct level *, struct level *);
+int creature_climb_downstair(struct creature *, struct level *, struct level *);
+int creature_rest(struct creature *);
 void creature_init(struct creature *, struct level *, enum race);
 void creature_place_randomly(struct creature *, struct level *);
 void creature_place_at_stair(struct creature *, struct level *, bool);

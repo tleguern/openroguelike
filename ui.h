@@ -17,11 +17,39 @@
 #ifndef UI_H__
 #define UI_H__
 
+enum keybindings {
+	K_ENTER,
+	K_ESCAPE,
+	K_LEFT,
+	K_DOWN,
+	K_UP,
+	K_RIGHT,
+	K_UPLEFT,
+	K_UPRIGHT,
+	K_DOWNLEFT,
+	K_DOWNRIGHT,
+	K_REST,
+	K_UPSTAIR,
+	K_DOWNSTAIR,
+	K_HELPMENU,
+	K_OPTIONMENU,
+	K__MAX,
+};
+
+struct keybindingsmap {
+	const char	*name;
+	char		 key;
+};
+
+extern struct keybindingsmap keybindingsmap[];
+
 void ui_cleanup(void);
 void ui_draw(struct level *);
 void ui_init(void);
 void ui_menu_options(void);
+void ui_menu_help(void);
 void ui_message(const char *, ...);
+enum keybindings ui_keybinding_get(int);
 
 #endif
 
