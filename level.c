@@ -40,39 +40,6 @@ tile_is_wall(struct tile *t) {
 }
 
 void
-tile_print(struct tile *t, int x, int y) {
-	switch (t->type) {
-	case T_EMPTY:
-		mvaddch(y, x, ' ');
-		break;
-	case T_WALL:
-		mvaddch(y, x, ACS_BLOCK);
-		break;
-	case T_UPSTAIR:
-		mvaddch(y, x, '>');
-		break;
-	case T_DOWNSTAIR:
-		mvaddch(y, x, '<');
-		break;
-	default:
-		break;
-	}
-	if (NULL != t->creature) {
-		mvaddch(y, x, t->creature->glyphe);
-	}
-}
-
-void
-level_draw(struct level *l)
-{
-	int x, y;
-
-	for (y = 0; y < MAXROWS; ++y)
-		for (x = 0; x < MAXCOLS; ++x)
-			tile_print(&(l->tile[y][x]), x, y);
-}
-
-void
 level_init(struct level *l) {
 	l->type = L_NONE;
 	for (int y = 0; y < MAXROWS; y++) {

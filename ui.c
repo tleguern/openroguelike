@@ -69,11 +69,44 @@ ui_cleanup(void)
 }
 
 void
+ui_tile_print(struct tile *t, int x, int y) {
+	switch (t->type) {
+	case T_EMPTY:
+		mvaddch(y, x, ' ');
+		break;
+	case T_WALL:
+		mvaddch(y, x, ACS_BLOCK);
+		break;
+	case T_UPSTAIR:
+		mvaddch(y, x, '>');
+		break;
+	case T_DOWNSTAIR:
+		mvaddch(y, x, '<');
+		break;
+	default:
+		break;
+	}
+	if (NULL != t->creature) {
+		mvaddch(y, x, t->creature->glyphe);
+	}
+}
+
+void
+ui_level_draw(struct level *l)
+{
+	int x, y;
+
+	for (y = 0; y < MAXROWS; ++y)
+		for (x = 0; x < MAXCOLS; ++x)
+			ui_tile_print(&(l->tile[y][x]), x, y);
+}
+
+void
 ui_draw(struct level *l)
 {
 	werase(stdscr);
 	/* draw main screen */
-	level_draw(l);
+	ui_level_draw(l);
 	wnoutrefresh(stdscr);
 	/* draw message screen */
 	wnoutrefresh(messagewin);
