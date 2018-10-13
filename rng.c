@@ -19,6 +19,12 @@ rng_set_seed(uint32_t seed)
 	rng_seed = seed;
 }
 
+uint32_t
+rng_get_seed(void)
+{
+	return(rng_seed);
+}
+
 /*
  * Initialize the array from the seed using an Linear Congruential Generator.
  *
