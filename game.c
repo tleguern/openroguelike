@@ -14,6 +14,8 @@
 
 static void usage(void);
 
+int debug = false;
+
 struct creature p;
 struct creature g;
 struct world w;
@@ -27,8 +29,11 @@ main(int argc, char *argv[])
 	const char	*errstr;
 	struct level	*lp;
 
-	while ((ch = getopt(argc, argv, "s:")) != -1) {
+	while ((ch = getopt(argc, argv, "ds:")) != -1) {
 		switch (ch) {
+		case 'd':
+			debug = true;
+			break;
 		case 's':
 			seed = strtonum(optarg, 0, UINT32_MAX, &errstr);
 			if (errstr != NULL) {
@@ -45,7 +50,10 @@ main(int argc, char *argv[])
 
 	rng_init();
 	ui_init();
-	ui_message("Welcome to the cave of the Goblin King");
+	if (debug == true)
+		ui_message("Seed: %u", rng_get_seed());
+	else
+		ui_message("Welcome to the cave of the Goblin King");
 	/* Check for 23 because of ripoffline */
 	if ((LINES < 23) || (COLS < 80)) {
 		ui_cleanup();
@@ -129,7 +137,7 @@ main(int argc, char *argv[])
 static void
 usage(void)
 {
-	fprintf(stderr, "usage: %s [-s seed]\n", getprogname());
+	fprintf(stderr, "usage: %s [-d] [-s seed]\n", getprogname());
 	exit(1);
 }
 
