@@ -17,6 +17,8 @@
 #ifndef UI_H__
 #define UI_H__
 
+struct level;
+
 enum keybindings {
 	K_ENTER,
 	K_ESCAPE,
