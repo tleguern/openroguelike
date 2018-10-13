@@ -26,7 +26,10 @@ WINDOW *messagewin;
 
 static void ui_alert(const char *);
 static void ui_reset_colors(void);
+static void ui_reset_tileset(void);
 static int  ui_set_message_window(WINDOW *, int);
+
+static chtype tileset[T__MAX];
 
 struct optionsmap optionsmap[] = {
 	{"colors", false, ui_reset_colors},
@@ -59,22 +62,7 @@ ui_cleanup(void)
 
 void
 ui_tile_print(struct tile *t, int x, int y) {
-	switch (t->type) {
-	case T_EMPTY:
-		mvaddch(y, x, ' ');
-		break;
-	case T_WALL:
-		mvaddch(y, x, ACS_BLOCK);
-		break;
-	case T_UPSTAIR:
-		mvaddch(y, x, '>');
-		break;
-	case T_DOWNSTAIR:
-		mvaddch(y, x, '<');
-		break;
-	default:
-		break;
-	}
+	mvaddch(y, x, tileset[t->type]);
 	if (NULL != t->creature) {
 		mvaddch(y, x, t->creature->glyphe);
 	}
@@ -117,6 +105,7 @@ ui_init(void)
 	if (has_colors() == FALSE)
 		return;
 	ui_reset_colors();
+	ui_reset_tileset();
 	redrawwin(stdscr);
 }
 
@@ -279,6 +268,16 @@ ui_reset_colors(void)
 		init_pair(4, COLOR_WHITE, COLOR_BLACK);
 		init_pair(5, COLOR_WHITE, COLOR_BLACK);
 	}
+}
+
+static void
+ui_reset_tileset(void)
+{
+	tileset[T_EMPTY] = ' ';
+	tileset[T_WALL] = '#';
+	tileset[T_UPSTAIR] = '>';
+	tileset[T_DOWNSTAIR] = '<';
+	/* use box_set */
 }
 
 enum keybindings
