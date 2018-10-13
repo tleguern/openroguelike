@@ -84,20 +84,27 @@ level_init(struct level *l) {
 }
 
 static void
-level_add_stair(struct level *l, bool up)
+level_add_stairs(struct level *l, bool upstair, bool downstair)
 {
-	int y, x;
+	int upy, upx, doy, dox;
 
 	do {
-		y = rng_rand_uniform(MAXROWS);
-		x = rng_rand_uniform(MAXCOLS);
-		if (tile_is_empty(&(l->tile[y][x]))) {
-			if (up)
-				l->tile[y][x].type = T_UPSTAIR;
-			else
-				l->tile[y][x].type = T_DOWNSTAIR;
-			break;
-		}
+		upy = rng_rand_uniform(MAXROWS);
+		upx = rng_rand_uniform(MAXCOLS);
+		doy = rng_rand_uniform(MAXROWS);
+		dox = rng_rand_uniform(MAXCOLS);
+		/* Ensure stairs are not too close */
+		if (abs((upy + upx) - (doy + dox)) < 50)
+			continue;
+		if (! tile_is_empty(&(l->tile[upy][upx])))
+			continue;
+		if (! tile_is_empty(&(l->tile[doy][dox])))
+			continue;
+		if (upstair)
+			l->tile[upy][upx].type = T_UPSTAIR;
+		if (downstair)
+			l->tile[doy][dox].type = T_DOWNSTAIR;
+		break;
 	} while (1);
 }
 
@@ -111,10 +118,12 @@ world_init(struct world *w)
 		w->levels[i] = calloc(1, sizeof(struct level));
 		level_init(w->levels[i]);
 		cave_gen(w->levels[i]);
-		if (i < w->levelsz - 1)
-			level_add_stair(w->levels[i], true);
-		if (i > 0)
-			level_add_stair(w->levels[i], false);
+		if (0 == i)
+			level_add_stairs(w->levels[i], true, false);
+		else if (w->levelsz - 1 == i)
+			level_add_stairs(w->levels[i], false, true);
+		else
+			level_add_stairs(w->levels[i], true, true);
 		world_add(w, w->levels[i]);
 	}
 }
