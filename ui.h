@@ -19,6 +19,17 @@
 
 struct level;
 
+enum options {
+	O_COLORS,
+	O__MAX,
+};
+
+struct optionsmap {
+	const char	*name;
+	bool		 value;
+	void		(*func)(void);
+};
+
 enum keybindings {
 	K_ENTER,
 	K_ESCAPE,

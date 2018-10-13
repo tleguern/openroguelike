@@ -28,17 +28,6 @@ static void ui_alert(const char *);
 static void ui_reset_colors(void);
 static int  ui_set_message_window(WINDOW *, int);
 
-enum options {
-	O_COLORS,
-	O__MAX,
-};
-
-struct optionsmap {
-	const char	*name;
-	bool		 value;
-	void		(*func)(void);
-};
-
 struct optionsmap optionsmap[] = {
 	{"colors", false, ui_reset_colors},
 };
