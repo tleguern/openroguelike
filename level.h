@@ -47,6 +47,7 @@ struct tile {
 enum level_type {
 	L_NONE,
 	L_CAVE,
+	L_STATIC,
 	L__MAX,
 };
 
@@ -66,6 +67,7 @@ bool tile_is_wall(struct tile *);
 void tile_print(struct tile *, int, int);
 
 void level_init(struct level *);
+void level_load(struct level *, const char *);
 void level_draw(struct level *);
 
 void cave_gen(struct level *);

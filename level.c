@@ -14,10 +14,15 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <sys/stat.h>
+
+#include <errno.h>
+#include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <curses.h>
 
+#include "ui.h"
 #include "level.h"
 #include "creature.h"
 #include "rng.h"
@@ -59,6 +64,45 @@ level_init(struct level *l) {
 			l->tile[y][x].creature = NULL;
 		}
 	}
+}
+
+void
+level_load(struct level *l, const char *path)
+{
+	size_t		 len;
+	struct stat	 stat;
+	char		*err;
+	char		*line;
+	FILE		*s;
+
+	l->type = L_STATIC;
+	if (NULL == (s = fopen(path, "r"))) {
+		err = strerror(errno);
+		goto clean;
+	}
+	if (-1 == fstat(fileno(s), &stat)) {
+		err = strerror(errno);
+		goto closeclean;
+	}
+	if (stat.st_size != 1782) {
+		err = "file should be 1782 bytes long";
+		goto closeclean;
+	}
+	for (int y = 0; y < MAXROWS; y++) {
+		if (NULL == (line = fgetln(s, &len)))
+			break;
+		for (int x = 0; x < MAXCOLS; x++)
+			if (line[x] != ' ')
+				l->tile[y][x].type = T_WALL;
+	}
+	fclose(s);
+	return;
+closeclean:
+	fclose(s);
+clean:
+	ui_cleanup();
+	fprintf(stderr, "%s: %s\n", path, err);
+	exit(EXIT_FAILURE);
 }
 
 static void
