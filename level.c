@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <curses.h>
 
 #include "ui.h"
@@ -104,6 +105,71 @@ clean:
 	exit(EXIT_FAILURE);
 }
 
+void
+level_refine(struct level *l)
+{
+	struct level tmp;
+
+	(void)memcpy(&tmp, l, sizeof(*l));
+	for (int y = 1; y < MAXROWS - 1; y++)
+		for (int x = 1; x < MAXCOLS - 1; x++) {
+			uint8_t nwall = 0;
+
+			if (tmp.tile[y][x].type != T_WALL)
+				continue;
+			if (tmp.tile[y - 1][x - 1].type == T_WALL)
+				nwall |= 128;
+			if (tmp.tile[y - 1][x].type == T_WALL)
+				nwall |= 64;
+			if (tmp.tile[y - 1][x + 1].type == T_WALL)
+				nwall |= 32;
+			if (tmp.tile[y][x - 1].type == T_WALL)
+				nwall |= 16;
+			/* The current tile doesn't count */
+			if (tmp.tile[y][x + 1].type == T_WALL)
+				nwall |= 8;
+			if (tmp.tile[y + 1][x - 1].type == T_WALL)
+				nwall |= 4;
+			if (tmp.tile[y + 1][x].type == T_WALL)
+				nwall |= 2;
+			if (tmp.tile[y + 1][x + 1].type == T_WALL)
+				nwall |= 1;
+			/* Now we assign the polished symbols: */
+			if (nwall == 255)
+				l->tile[y][x].type = T_WALL;
+			/* Crosses */
+			else if (90 == nwall || 91 == nwall || 94 == nwall)
+				l->tile[y][x].type = T_CROSS;
+			/* Tees */
+			else if ((nwall & 88) == 88)
+				l->tile[y][x].type = T_BTEE;
+			else if ((nwall & 82) == 82)
+				l->tile[y][x].type = T_RTEE;
+			else if ((nwall & 74) == 74)
+				l->tile[y][x].type = T_LTEE;
+			else if ((nwall & 26) == 26)
+				l->tile[y][x].type = T_TTEE;
+			/* Corners */
+			else if (nwall == 127 || (nwall & 80) == 80)
+				l->tile[y][x].type = T_LRCORNER;
+			else if (nwall == 223 || (nwall & 72) == 72)
+				l->tile[y][x].type = T_LLCORNER;
+			else if (nwall == 251 || (nwall & 18) == 18)
+				l->tile[y][x].type = T_URCORNER;
+			else if (nwall == 254 || (nwall & 10) == 10)
+				l->tile[y][x].type = T_ULCORNER;
+			/* Straight lines */
+			else if ((nwall | 66) == nwall
+			    || (nwall | 64) == nwall
+			    || (nwall | 2) == nwall)
+				l->tile[y][x].type = T_VLINE;
+			else if ((nwall | 34) == nwall
+			    || (nwall | 16) == nwall
+			    || (nwall | 8) == nwall)
+				l->tile[y][x].type = T_HLINE;
+		}
+}
+
 static void
 level_add_stairs(struct level *l, bool upstair, bool downstair)
 {
@@ -135,10 +201,15 @@ world_init(struct world *w)
 	w->current = 0;
 	w->levelsz = 3;
 	w->levels = calloc(w->levelsz, sizeof(struct level *));
-	for (int32_t i = 0; i < w->levelsz; i++) {
+	w->levels[0] = calloc(1, sizeof(struct level));
+	level_init(w->levels[0]);
+	level_load(w->levels[0], "./misc/level1");
+	level_refine(w->levels[0]);
+	for (int32_t i = 1; i < w->levelsz; i++) {
 		w->levels[i] = calloc(1, sizeof(struct level));
 		level_init(w->levels[i]);
 		cave_gen(w->levels[i]);
+		level_refine(w->levels[i]);
 		if (0 == i)
 			level_add_stairs(w->levels[i], true, false);
 		else if (w->levelsz - 1 == i)
