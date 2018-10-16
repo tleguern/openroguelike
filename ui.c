@@ -33,6 +33,7 @@ static chtype tileset[T__MAX];
 
 struct optionsmap optionsmap[] = {
 	{"colors", false, ui_reset_colors},
+	{"DECgraphics", false, ui_reset_tileset},
 };
 
 struct keybindingsmap keybindingsmap[] = {
@@ -273,10 +274,40 @@ ui_reset_colors(void)
 static void
 ui_reset_tileset(void)
 {
-	tileset[T_EMPTY] = ' ';
-	tileset[T_WALL] = '#';
-	tileset[T_UPSTAIR] = '>';
-	tileset[T_DOWNSTAIR] = '<';
+	ui_message("ui_reset_tileset");
+	if (optionsmap[O_DECGRAPHICS].value == true) {
+		tileset[T_EMPTY] = ' ';
+		tileset[T_WALL] = '#';
+		tileset[T_UPSTAIR] = '>';
+		tileset[T_DOWNSTAIR] = '<';
+		tileset[T_HLINE] = ACS_HLINE;
+		tileset[T_VLINE] = ACS_VLINE;
+		tileset[T_BTEE] = ACS_BTEE;
+		tileset[T_TTEE] = ACS_TTEE;
+		tileset[T_LTEE] = ACS_LTEE;
+		tileset[T_RTEE] = ACS_RTEE;
+		tileset[T_CROSS] = ACS_PLUS;
+		tileset[T_LLCORNER] = ACS_LLCORNER;
+		tileset[T_LRCORNER] = ACS_LRCORNER;
+		tileset[T_ULCORNER] = ACS_ULCORNER;
+		tileset[T_URCORNER] = ACS_URCORNER;
+	} else {
+		tileset[T_EMPTY] = ' ';
+		tileset[T_WALL] = '#';
+		tileset[T_UPSTAIR] = '>';
+		tileset[T_DOWNSTAIR] = '<';
+		tileset[T_HLINE] = '#';
+		tileset[T_VLINE] = '#';
+		tileset[T_BTEE] = '#';
+		tileset[T_TTEE] = '#';
+		tileset[T_LTEE] = '#';
+		tileset[T_RTEE] = '#';
+		tileset[T_CROSS] = '#';
+		tileset[T_LLCORNER] = '#';
+		tileset[T_LRCORNER] = '#';
+		tileset[T_ULCORNER] = '#';
+		tileset[T_URCORNER] = '#';
+	}
 	/* use box_set */
 }
 

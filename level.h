@@ -25,6 +25,17 @@ enum tile_type {
 	T_WALL,
 	T_UPSTAIR,
 	T_DOWNSTAIR,
+	T_HLINE,
+	T_VLINE,
+	T_BTEE,
+	T_TTEE,
+	T_LTEE,
+	T_RTEE,
+	T_CROSS,
+	T_LLCORNER,
+	T_LRCORNER,
+	T_ULCORNER,
+	T_URCORNER,
 	T__MAX,
 };
 

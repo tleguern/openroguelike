@@ -21,6 +21,7 @@ struct level;
 
 enum options {
 	O_COLORS,
+	O_DECGRAPHICS,
 	O__MAX,
 };
 
