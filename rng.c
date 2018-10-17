@@ -2,9 +2,12 @@
  * Public domain - 2018 Tristan Le Guern <tleguern@bouledef.eu>
  */
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+
+#include "rng.h"
 
 static uint32_t rng_storage[4096];
 static uint32_t rng_counter = 4095;

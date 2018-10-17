@@ -2,6 +2,8 @@
  * Public domain - 2018 Tristan Le Guern <tleguern@bouledef.eu>
  */
 
+#include <stdint.h>
+
 #ifndef RNG_H__
 #define RNG_H__
 
