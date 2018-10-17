@@ -71,7 +71,7 @@ level_load(struct level *l, const char *path)
 {
 	struct stat	 stat;
 	char		 line[81];
-	char		*err;
+	const char	*err;
 	FILE		*s;
 
 	l->type = L_STATIC;

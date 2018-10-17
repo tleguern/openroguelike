@@ -26,7 +26,6 @@ int
 main(int argc, char *argv[])
 {
 	int		 ch;
-	uint32_t	 time;
 	uint32_t	 seed;
 	const char	*errstr;
 	struct level	*lp;
@@ -64,7 +63,6 @@ main(int argc, char *argv[])
 		return(1);
 	}
 
-	time = 0;
 	world_init(&w);
 	lp = world_first(&w);
 	creature_init(&p, lp, R_HUMAN);
