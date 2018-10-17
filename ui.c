@@ -61,7 +61,7 @@ ui_cleanup(void)
 	endwin();
 }
 
-void
+static void
 ui_tile_print(struct tile *t, int x, int y) {
 	mvaddch(y, x, tileset[t->type]);
 	if (NULL != t->creature) {
@@ -69,7 +69,7 @@ ui_tile_print(struct tile *t, int x, int y) {
 	}
 }
 
-void
+static void
 ui_level_draw(struct level *l)
 {
 	int x, y;
@@ -218,7 +218,7 @@ ui_message(const char *message, ...)
 
 	va_start(ap, message);
 	wmove(messagewin, 0, 0);
-	vwprintw(messagewin, message, ap);
+	vw_printw(messagewin, message, ap);
 	va_end(ap);
 	wclrtoeol(messagewin);
 	wrefresh(messagewin);
