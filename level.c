@@ -105,7 +105,7 @@ clean:
 	exit(EXIT_FAILURE);
 }
 
-void
+static void
 level_refine(struct level *l)
 {
 	struct level tmp;
