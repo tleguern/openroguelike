@@ -69,10 +69,9 @@ level_init(struct level *l) {
 void
 level_load(struct level *l, const char *path)
 {
-	size_t		 len;
 	struct stat	 stat;
+	char		 line[81];
 	char		*err;
-	char		*line;
 	FILE		*s;
 
 	l->type = L_STATIC;
@@ -89,7 +88,7 @@ level_load(struct level *l, const char *path)
 		goto closeclean;
 	}
 	for (int y = 0; y < MAXROWS; y++) {
-		if (NULL == (line = fgetln(s, &len)))
+		if (0 == fread(line, sizeof(char), sizeof(line), s))
 			break;
 		for (int x = 0; x < MAXCOLS; x++)
 			if (line[x] != ' ')
