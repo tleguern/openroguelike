@@ -135,38 +135,117 @@ level_refine(struct level *l)
 			if (tmp.tile[y + 1][x + 1].type == T_WALL)
 				nwall |= 1;
 			/* Now we assign the polished symbols: */
-			if (nwall == 255)
-				l->tile[y][x].type = T_WALL;
-			/* Crosses */
-			else if (90 == nwall || 91 == nwall || 94 == nwall)
+			switch (nwall) {
+			case 90:
+			case 91:
+			case 94:
+			case 122:
+			case 218:
 				l->tile[y][x].type = T_CROSS;
-			/* Tees */
-			else if ((nwall & 88) == 88)
+				break;
+			case 88:
+			case 92:
+			case 93:
+			case 89:
+			case 95:
+			case 120:
+			case 124:
+			case 189:
+			case 216:
 				l->tile[y][x].type = T_BTEE;
-			else if ((nwall & 82) == 82)
+				break;
+			case 82:
+			case 83:
+			case 86:
+			case 114:
+			case 123:
+			case 115:
+			case 210:
 				l->tile[y][x].type = T_RTEE;
-			else if ((nwall & 74) == 74)
+				break;
+			case 74:
+			case 75:
+			case 78:
+			case 106:
+			case 202:
+			case 222:
+			case 206:
 				l->tile[y][x].type = T_LTEE;
-			else if ((nwall & 26) == 26)
+				break;
+			case 26:
+			case 27:
+			case 30:
+			case 58:
+			case 62:
+			case 154:
+			case 155:
+			case 250:
+			case 186:
 				l->tile[y][x].type = T_TTEE;
-			/* Corners */
-			else if (nwall == 127 || (nwall & 80) == 80)
+				break;
+			case 80:
+			case 84:
+			case 112:
+			case 127:
+			case 208:
+			case 240:
+			case 212:
+			case 244:
 				l->tile[y][x].type = T_LRCORNER;
-			else if (nwall == 223 || (nwall & 72) == 72)
+				break;
+			case 72:
+			case 73:
+			case 104:
+			case 105:
+			case 200:
+			case 223:
+			case 232:
+			case 233:
 				l->tile[y][x].type = T_LLCORNER;
-			else if (nwall == 251 || (nwall & 18) == 18)
+				break;
+			case 18:
+			case 19:
+			case 22:
+			case 23:
+			case 146:
+			case 150:
+			case 151:
+			case 251:
 				l->tile[y][x].type = T_URCORNER;
-			else if (nwall == 254 || (nwall & 10) == 10)
+				break;
+			case 10:
+			case 11:
+			case 14:
+			case 15:
+			case 42:
+			case 43:
+			case 47:
+			case 254:
 				l->tile[y][x].type = T_ULCORNER;
-			/* Straight lines */
-			else if ((nwall | 66) == nwall
-			    || (nwall | 64) == nwall
-			    || (nwall | 2) == nwall)
-				l->tile[y][x].type = T_VLINE;
-			else if ((nwall | 34) == nwall
-			    || (nwall | 16) == nwall
-			    || (nwall | 8) == nwall)
+				break;
+			case 31:
+			case 159:
+			case 248:
+			case 249:
+			case 252:
 				l->tile[y][x].type = T_HLINE;
+				break;
+			case 107:
+			case 214:
+				l->tile[y][x].type = T_VLINE;
+				break;
+			default:
+				if ((nwall | 66) == nwall)
+					l->tile[y][x].type = T_VLINE;
+				else if ((nwall | 34) == nwall)
+					l->tile[y][x].type = T_HLINE;
+				else if ((nwall | 64) == nwall
+				    || (nwall | 2) == nwall)
+					l->tile[y][x].type = T_VLINE;
+				else if ((nwall | 16) == nwall
+				    || (nwall | 8) == nwall)
+					l->tile[y][x].type = T_HLINE;
+			}
 		}
 }
 
@@ -202,10 +281,10 @@ world_init(struct world *w)
 	w->levelsz = 3;
 	w->levels = calloc(w->levelsz, sizeof(struct level *));
 	w->levels[0] = calloc(1, sizeof(struct level));
-	level_init(w->levels[0]);
-	level_load(w->levels[0], "./misc/level1");
-	level_refine(w->levels[0]);
-	for (int32_t i = 1; i < w->levelsz; i++) {
+	//level_init(w->levels[0]);
+	//level_load(w->levels[0], "./misc/level0");
+	//level_refine(w->levels[0]);
+	for (int32_t i = 0; i < w->levelsz; i++) {
 		w->levels[i] = calloc(1, sizeof(struct level));
 		level_init(w->levels[i]);
 		cave_gen(w->levels[i]);
