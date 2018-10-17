@@ -2,6 +2,8 @@
  * Public domain - 2018 Tristan Le Guern <tleguern@bouledef.eu>
  */
 
+#include "config.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -40,8 +42,14 @@ rng_init(void)
 {
 	uint32_t i, seed;
 
-	if (rng_seed == 0)
+	if (rng_seed == 0) {
+#if HAVE_ARC4RANDOM
 		rng_seed = arc4random();
+#else
+		srandom(time(NULL));
+		rng_seed = random();
+#endif
+	}
 	seed = rng_seed;
 	for (i = 0; i < (sizeof(rng_storage) / sizeof(uint32_t)); i++) {
 		rng_storage[i] = seed;
