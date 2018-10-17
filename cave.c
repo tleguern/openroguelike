@@ -16,9 +16,9 @@
 
 #include <sys/types.h>
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -58,7 +58,7 @@ cave_reduce_noise(struct level *l, struct level *tmp) {
 			unsigned int nwall = 0;
 			for (iy = -1; iy <= 1; ++iy)
 				for (ix = -1; ix <= 1; ++ix)
-					if (l->tile[y + iy][x + ix].type \
+					if (l->tile[y + iy][x + ix].type
 					    == T_WALL)
 						++nwall;
 			if (nwall >= 5)

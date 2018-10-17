@@ -30,7 +30,7 @@
 static void level_add_stair(struct level *, bool);
 
 bool
-tile_is_empty(struct tile *t) {
+tile_is_empty(struct tile const *t) {
 	if ((T_EMPTY == t->type || T_UPSTAIR == t->type
 	    || T_DOWNSTAIR == t->type) && NULL == t->creature)
 		return(true);
@@ -38,7 +38,7 @@ tile_is_empty(struct tile *t) {
 }
 
 bool
-tile_is_wall(struct tile *t) {
+tile_is_wall(struct tile const *t) {
 	if (T_WALL == t->type
 	    || T_HLINE == t->type
 	    || T_VLINE == t->type

@@ -79,21 +79,33 @@ creature_place_at_stair(struct creature *c, struct level *l, bool up)
 int
 creature_move(struct creature *c, struct level *l, int row, int col)
 {
-	if (c->y + row < 0 || c->y + row >= LINES) {
+	int nx = c->x + col;
+	int ny = c->y + row;
+
+	if (ny < 0 || ny >= LINES) {
 		return(-1);
 	}
-	if (c->x + col < 0 || c->x + col >= COLS) {
+	if (nx < 0 || nx >= COLS) {
 		return(-1);
 	}
-	if (tile_is_wall(&(l->tile[c->y + row][c->x + col]))) {
+
+	struct tile const* nt = &l->tile[ny][nx];
+
+	if (tile_is_wall(nt) == true) {
 		return(-1);
 	}
-	if (tile_is_empty(&(l->tile[c->y + row][c->x + col])) == false) {
+
+	if (tile_is_empty(nt) == false) {
+		if (NULL != nt->creature) {
+			nt->creature->hp -= 1;
+			return(0);
+		}
 		return(-1);
 	}
+
 	l->tile[c->y][c->x].creature = NULL;
-	c->y += row;
-	c->x += col;
+	c->y = ny;
+	c->x = nx;
 	l->tile[c->y][c->x].creature = c;
 	return(0);
 }
@@ -180,6 +192,15 @@ creature_do_something(struct creature *c, struct level *l)
 {
 	uint32_t choice;
 
+	if (c->hp == -1)
+		return;
+
+	if (c->hp == 0) {
+		c->hp = -1;
+		l->tile[c->y][c->x].creature = NULL;
+		return;
+	}
+
 	choice = rng_rand_uniform(8);
 	switch (choice) {
 	case 0:
@@ -213,11 +234,13 @@ static void
 human_init(struct creature *c)
 {
 	c->glyphe = '@' | COLOR_PAIR(2);
+	c->hp = 10;
 }
 
 static void
 goblin_init(struct creature *c)
 {
 	c->glyphe = 'g' | COLOR_PAIR(5);
+	c->hp = 2;
 }
 

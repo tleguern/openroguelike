@@ -29,6 +29,7 @@ struct creature {
 	int x;
 	int y;
 	int glyphe;
+	int hp;
 	enum race race;
 };
 
