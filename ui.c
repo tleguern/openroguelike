@@ -62,7 +62,7 @@ ui_cleanup(void)
 }
 
 static void
-ui_tile_print(struct tile *t, int x, int y) {
+ui_tile_print(struct tile const *t, int x, int y) {
 	mvaddch(y, x, tileset[t->type]);
 	if (NULL != t->creature) {
 		mvaddch(y, x, t->creature->glyphe);

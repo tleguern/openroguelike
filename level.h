@@ -62,9 +62,9 @@ struct world {
 	struct level	**levels;
 };
 
-bool tile_is_empty(struct tile *);
-bool tile_is_wall(struct tile *);
-void tile_print(struct tile *, int, int);
+bool tile_is_empty(struct tile const *);
+bool tile_is_wall(struct tile const *);
+void tile_print(struct tile const *, int, int);
 
 void level_init(struct level *);
 void level_load(struct level *, const char *);
