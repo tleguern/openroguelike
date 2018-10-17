@@ -59,7 +59,7 @@ void
 level_init(struct level *l) {
 	l->type = L_NONE;
 	for (int y = 0; y < MAXROWS; y++) {
-		for (u_int x = 0; x < MAXCOLS; x++) {
+		for (int x = 0; x < MAXCOLS; x++) {
 			l->tile[y][x].type = T_EMPTY;
 			l->tile[y][x].creature = NULL;
 		}
