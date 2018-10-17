@@ -1,6 +1,7 @@
 PROG= roguelike
 SRCS= game.c ui.c creature.c level.c cave.c rng.c
 OBJS= ${SRCS:.c=.o}
+DEPS= ${SRCS:.c=.d}
 
 LDADD+= -lcurses
 CFLAGS+= -Wall -Wextra -Wno-unused-function
@@ -9,17 +10,12 @@ CFLAGS+= -Wall -Wextra -Wno-unused-function
 .PHONY: clean
 
 .c.o:
-	${CC} ${CFLAGS} -c $<
+	${CC} -MMD -MF ${<:.c=.d} ${CFLAGS} -c $<
 
 ${PROG}: ${OBJS}
 	${CC} ${LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
-game.c: creature.h level.h ui.h rng.h
-ui.c: ui.h
-cave.c: level.h rng.h
-level.c: creature.h level.h rng.h
-creature.c: creature.h level.h ui.h rng.h
-rng.c: rng.h
-
 clean:
-	rm -f -- ${PROG} ${OBJS}
+	rm -f -- ${PROG} ${OBJS} ${DEPS}
+
+-include *.d
