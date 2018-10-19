@@ -188,7 +188,7 @@ ui_menu_help(void)
 	do {
 		int key = -1;
 
-		for (int i = 2; i < K__MAX; i++) {
+		for (int i = NONCONFIGURABLEKEYS; i < K__MAX; i++) {
 			mvwprintw(helpwin, i - nonconfigurablekeys + 1, 1, "%c %s", \
 			    keybindingsmap[i].key, keybindingsmap[i].name);
 		}

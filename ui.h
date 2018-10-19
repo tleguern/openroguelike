@@ -31,6 +31,7 @@ struct optionsmap {
 	void		(*func)(void);
 };
 
+#define NONCONFIGURABLEKEYS 2
 enum keybindings {
 	K_ENTER,
 	K_ESCAPE,
@@ -55,6 +56,7 @@ struct keybindingsmap {
 	char		 key;
 };
 
+extern struct optionsmap optionsmap[];
 extern struct keybindingsmap keybindingsmap[];
 
 void ui_cleanup(void);

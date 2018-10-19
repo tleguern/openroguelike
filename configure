@@ -132,6 +132,7 @@ done
 #----------------------------------------------------------------------
 
 HAVE_ARC4RANDOM=
+HAVE_ERR=
 HAVE_GETPROGNAME=
 HAVE_PROGRAM_INVOCATION_SHORT_NAME=
 HAVE_STRTONUM=
@@ -241,6 +242,7 @@ runtest() {
 #----------------------------------------------------------------------
 
 runtest arc4random	ARC4RANDOM			  || true
+runtest err		ERR				  || true
 runtest getprogname	GETPROGNAME			  || true
 runtest program_invocation_short_name	PROGRAM_INVOCATION_SHORT_NAME || true
 runtest strtonum	STRTONUM			  || true
@@ -278,8 +280,15 @@ __HEREDOC__
 
 # For the function declaration variables...
 
+[ ${HAVE_ERR} -eq 0 ] \
+	&& echo "#include <stdarg.h>"
+
+# Now we handle our HAVE_xxxx values.
+# Most will just be defined as 0 or 1.
+
 cat << __HEREDOC__
 #define HAVE_ARC4RANDOM ${HAVE_ARC4RANDOM}
+#define HAVE_ERR ${HAVE_ERR}
 #define HAVE_GETPROGNAME ${HAVE_GETPROGNAME}
 #define HAVE_PROGRAM_INVOCATION_SHORT_NAME ${HAVE_PROGRAM_INVOCATION_SHORT_NAME}
 #define HAVE_STRTONUM ${HAVE_STRTONUM}
@@ -287,6 +296,15 @@ cat << __HEREDOC__
 __HEREDOC__
 
 # Now we do our function declarations for missing functions.
+
+if [ ${HAVE_ERR} -eq 0 ]; then
+	echo "extern void err(int, const char *, ...);"
+	echo "extern void errx(int, const char *, ...);"
+	echo "extern void warn(const char *, ...);"
+	echo "extern void warnx(const char *, ...);"
+	echo "extern void vwarn(const char *, va_list);"
+	echo "extern void vwarnx(const char *, va_list);"
+fi
 
 if [ ${HAVE_GETPROGNAME} -eq 0 ]; then
 	echo "extern const char *getprogname(void);"
