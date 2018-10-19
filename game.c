@@ -88,7 +88,6 @@ config_file_read(const char *configfile)
 }
 
 struct creature p;
-struct creature g;
 struct world w;
 
 int
@@ -152,7 +151,6 @@ main(int argc, char *argv[])
 	world_init(&w);
 	lp = world_first(&w);
 	creature_init(&p, lp, R_HUMAN);
-	creature_init(&g, lp, R_GOBLIN);
 	do {
 		int key = -1;
 		int noaction = 0;
@@ -213,7 +211,12 @@ main(int argc, char *argv[])
 		if (noaction == -1)
 			continue;
 		/* Monsters' turn */
-		creature_do_something(&g, world_first(&w));
+		for (int32_t i = 0; i < w.creaturesz; i++) {
+			struct creature *c;
+
+			c = w.creatures[i];
+			creature_do_something(c, world_first(&w));
+		}
 	} while (1);
 	world_free(&w);
 	ui_cleanup();

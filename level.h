@@ -58,8 +58,10 @@ struct level {
 
 struct world {
 	int32_t		  levelsz;
+	int32_t		  creaturesz;
 	int32_t	  	  current;
 	struct level	**levels;
+	struct creature **creatures;
 };
 
 bool tile_is_empty(struct tile *);
