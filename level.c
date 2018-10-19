@@ -146,23 +146,11 @@ world_init(struct world *w)
 			level_add_stairs(w->levels[i], false, true);
 		else
 			level_add_stairs(w->levels[i], true, true);
-		world_add(w, w->levels[i]);
 	}
 	w->creatures = calloc(w->creaturesz, sizeof(struct creature *));
 	for (int32_t i = 0; i < w->creaturesz; i++) {
 		w->creatures[i] = calloc(1, sizeof(struct creature));
 		creature_init(w->creatures[i], w->levels[0], R_GOBLIN);
-	}
-}
-
-void
-world_add(struct world *w, struct level *l)
-{
-	for (int32_t i = 0; i < w->levelsz; i++) {
-		if (w->levels[i] == NULL) {
-			w->levels[i] = l;
-			break;
-		}
 	}
 }
 
