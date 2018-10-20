@@ -156,66 +156,74 @@ main(int argc, char *argv[])
 		int noaction = 0;
 
 		ui_draw(lp);
-		key = ui_keybinding_get(wgetch(stdscr));
-		if (key == K__MAX) {
-			continue;
+		p.actionpoints += p.speed;
+		while (p.actionpoints >= 5) {
+			key = ui_keybinding_get(wgetch(stdscr));
+			if (key == K__MAX) {
+				continue;
+			}
+			switch (key) {
+			case K_LEFT:
+				noaction = creature_move_left(&p, lp);
+				break;
+			case K_DOWN:
+				noaction = creature_move_down(&p, lp);
+				break;
+			case K_UP:
+				noaction = creature_move_up(&p, lp);
+				break;
+			case K_RIGHT:
+				noaction = creature_move_right(&p, lp);
+				break;
+			case K_UPLEFT:
+				noaction = creature_move_upleft(&p, lp);
+				break;
+			case K_UPRIGHT:
+				noaction = creature_move_upright(&p, lp);
+				break;
+			case K_DOWNLEFT:
+				noaction = creature_move_downleft(&p, lp);
+				break;
+			case K_DOWNRIGHT:
+				noaction = creature_move_downright(&p, lp);
+				break;
+			case K_UPSTAIR:
+				noaction = creature_climb_upstair(&p, lp, world_next(&w));
+				lp = world_current(&w);
+				break;
+			case K_DOWNSTAIR:
+				noaction = creature_climb_downstair(&p, lp, world_prev(&w));
+				lp = world_current(&w);
+				break;
+			case K_REST:
+				noaction = creature_rest(&p);
+				break;
+			case K_OPTIONMENU:
+				ui_menu_options();
+				noaction = -1;
+				break;
+			case K_HELPMENU:
+				ui_menu_help();
+				noaction = -1;
+				break;
+			default:
+				noaction = -1;
+				break;
+			}
+			if (noaction == -1)
+				continue;
+			p.actionpoints -= 5;
 		}
-		switch (key) {
-		case K_LEFT:
-			noaction = creature_move_left(&p, lp);
-			break;
-		case K_DOWN:
-			noaction = creature_move_down(&p, lp);
-			break;
-		case K_UP:
-			noaction = creature_move_up(&p, lp);
-			break;
-		case K_RIGHT:
-			noaction = creature_move_right(&p, lp);
-			break;
-		case K_UPLEFT:
-			noaction = creature_move_upleft(&p, lp);
-			break;
-		case K_UPRIGHT:
-			noaction = creature_move_upright(&p, lp);
-			break;
-		case K_DOWNLEFT:
-			noaction = creature_move_downleft(&p, lp);
-			break;
-		case K_DOWNRIGHT:
-			noaction = creature_move_downright(&p, lp);
-			break;
-		case K_UPSTAIR:
-			noaction = creature_climb_upstair(&p, lp, world_next(&w));
-			lp = world_current(&w);
-			break;
-		case K_DOWNSTAIR:
-			noaction = creature_climb_downstair(&p, lp, world_prev(&w));
-			lp = world_current(&w);
-			break;
-		case K_REST:
-			noaction = creature_rest(&p);
-			break;
-		case K_OPTIONMENU:
-			ui_menu_options();
-			noaction = -1;
-			break;
-		case K_HELPMENU:
-			ui_menu_help();
-			noaction = -1;
-			break;
-		default:
-			noaction = -1;
-			break;
-		}
-		if (noaction == -1)
-			continue;
 		/* Monsters' turn */
 		for (int32_t i = 0; i < w.creaturesz; i++) {
 			struct creature *c;
 
 			c = w.creatures[i];
-			creature_do_something(c, world_first(&w));
+			c->actionpoints += c->speed;
+			while (c->actionpoints >= 5) {
+				creature_do_something(c, world_first(&w));
+				c->actionpoints -= 5;
+			}
 		}
 	} while (1);
 	world_free(&w);

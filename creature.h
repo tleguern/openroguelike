@@ -29,6 +29,8 @@ struct creature {
 	int x;
 	int y;
 	int glyphe;
+	int speed;
+	int actionpoints;
 	enum race race;
 };
 

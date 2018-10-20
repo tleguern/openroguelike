@@ -30,6 +30,7 @@ creature_init(struct creature *c, struct level *l, enum race race)
 {
 	creature_place_randomly(c, l);
 	c->race = race;
+	c->actionpoints = 0;
 	switch (race) {
 	case R_HUMAN:
 		human_init(c);
@@ -213,11 +214,13 @@ static void
 human_init(struct creature *c)
 {
 	c->glyphe = '@' | COLOR_PAIR(2);
+	c->speed = 5;
 }
 
 static void
 goblin_init(struct creature *c)
 {
 	c->glyphe = 'g' | COLOR_PAIR(5);
+	c->speed = 7;
 }
 
