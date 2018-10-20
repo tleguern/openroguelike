@@ -59,6 +59,7 @@ struct keybindingsmap {
 extern struct optionsmap optionsmap[];
 extern struct keybindingsmap keybindingsmap[];
 
+void ui_alert(const char *);
 void ui_cleanup(void);
 void ui_draw(struct level *);
 void ui_init(void);

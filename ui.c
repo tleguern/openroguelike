@@ -24,7 +24,6 @@
 
 WINDOW *messagewin;
 
-static void ui_alert(const char *);
 static void ui_reset_colors(void);
 static void ui_reset_tileset(void);
 static int  ui_set_message_window(WINDOW *, int);
@@ -225,7 +224,7 @@ ui_message(const char *message, ...)
 }
 
 /* TODO: Change to var args */
-static void
+void
 ui_alert(const char *message)
 {
 	size_t messagez;
@@ -253,7 +252,6 @@ ui_set_message_window(WINDOW *win, int ncols)
 static void
 ui_reset_colors(void)
 {
-	ui_message("ui_reset_colors");
 	start_color();
 	/* Don't bother calling can_change_color() */
 	if (optionsmap[O_COLORS].value == true) {
@@ -274,7 +272,6 @@ ui_reset_colors(void)
 static void
 ui_reset_tileset(void)
 {
-	ui_message("ui_reset_tileset");
 	if (optionsmap[O_DECGRAPHICS].value == true) {
 		tileset[T_EMPTY] = ' ';
 		tileset[T_WALL] = '#';
