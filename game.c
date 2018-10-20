@@ -199,10 +199,12 @@ main(int argc, char *argv[])
 				break;
 			case K_OPTIONMENU:
 				ui_menu_options();
+				ui_draw(lp);
 				noaction = -1;
 				break;
 			case K_HELPMENU:
 				ui_menu_help();
+				ui_draw(lp);
 				noaction = -1;
 				break;
 			default:
