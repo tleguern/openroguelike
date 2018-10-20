@@ -66,6 +66,7 @@ void ui_init(void);
 void ui_menu_options(void);
 void ui_menu_help(void);
 void ui_message(const char *, ...);
+void ui_clearmessage(void);
 enum keybindings ui_keybinding_get(int);
 
 #endif

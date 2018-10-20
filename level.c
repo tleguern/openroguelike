@@ -58,6 +58,8 @@ tile_is_wall(struct tile *t) {
 void
 level_init(struct level *l) {
 	l->type = L_NONE;
+	l->visited = false;
+	l->entrymessage = NULL;
 	for (int y = 0; y < MAXROWS; y++) {
 		for (int x = 0; x < MAXCOLS; x++) {
 			l->tile[y][x].type = T_EMPTY;
@@ -147,9 +149,12 @@ world_init(struct world *w)
 		else
 			level_add_stairs(w->levels[i], true, true);
 	}
+	w->levels[0]->entrymessage = strdup("You enter the Goblin's Caves");
 	/* The final level is the fixed hall room of Goblin King */
 	w->levels[w->levelsz - 1] = calloc(1, sizeof(struct level));
 	level_init(w->levels[w->levelsz - 1]);
+	w->levels[w->levelsz - 1]->entrymessage =
+	    strdup("Unwelcome to the Hall of the Goblin King");
 	level_load(w->levels[w->levelsz - 1], "misc/hall");
 
 	w->creatures = calloc(w->creaturesz, sizeof(struct creature *));
@@ -191,6 +196,7 @@ void
 world_free(struct world *w)
 {
 	for (int32_t i = 0; i < w->levelsz; i++) {
+		free(w->levels[i]->entrymessage);
 		free(w->levels[i]);
 		w->levels[i] = NULL;
 	}

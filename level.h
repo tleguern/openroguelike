@@ -52,8 +52,10 @@ enum level_type {
 };
 
 struct level {
-	enum level_type	type;
-	struct tile	tile[MAXROWS][MAXCOLS];
+	enum level_type	 type;
+	bool		 visited;
+	char		*entrymessage;
+	struct tile	 tile[MAXROWS][MAXCOLS];
 };
 
 struct world {

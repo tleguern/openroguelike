@@ -135,10 +135,6 @@ main(int argc, char *argv[])
 
 	rng_init();
 	ui_init();
-	if (debug == true)
-		ui_message("Seed: %u", rng_get_seed());
-	else
-		ui_message("Unwelcome to the cave of the Goblin King");
 	/* Check for 23 because of ripoffline */
 	if ((LINES < 23) || (COLS < 80)) {
 		ui_cleanup();
@@ -154,6 +150,15 @@ main(int argc, char *argv[])
 		int key = -1;
 		int noaction = 0;
 
+		if (false == lp->visited) {
+			if (true == debug)
+				ui_message("Seed: %u", rng_get_seed());
+			else if (NULL == lp->entrymessage)
+				ui_clearmessage();
+			else
+				ui_message(lp->entrymessage);
+			lp->visited = true;
+		}
 		ui_draw(lp);
 		p.actionpoints += p.speed;
 		while (p.actionpoints >= 5) {

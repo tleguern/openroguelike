@@ -223,6 +223,13 @@ ui_message(const char *message, ...)
 	wrefresh(messagewin);
 }
 
+void
+ui_clearmessage(void)
+{
+	wclear(messagewin);
+	wrefresh(messagewin);
+}
+
 /* TODO: Change to var args */
 void
 ui_alert(const char *message)
