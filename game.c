@@ -87,9 +87,6 @@ config_file_read(const char *configfile)
 	line = NULL;
 }
 
-struct creature p;
-struct world w;
-
 int
 main(int argc, char *argv[])
 {
@@ -97,6 +94,8 @@ main(int argc, char *argv[])
 	uint32_t	 seed;
 	glob_t		 gl;
 	char		 path[PATH_MAX];
+	struct creature	 p;
+	struct world	 w;
 	char		*configfile = NULL;
 	const char	*errstr;
 	struct level	*lp;
