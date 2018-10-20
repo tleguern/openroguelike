@@ -139,7 +139,7 @@ main(int argc, char *argv[])
 	if (debug == true)
 		ui_message("Seed: %u", rng_get_seed());
 	else
-		ui_message("Welcome to the cave of the Goblin King");
+		ui_message("Unwelcome to the cave of the Goblin King");
 	/* Check for 23 because of ripoffline */
 	if ((LINES < 23) || (COLS < 80)) {
 		ui_cleanup();
