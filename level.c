@@ -91,8 +91,10 @@ level_load(struct level *l, const char *path)
 		if (0 == fread(line, sizeof(char), sizeof(line), s))
 			break;
 		for (int x = 0; x < MAXCOLS; x++)
-			if (line[x] != ' ')
+			if (line[x] == '#')
 				l->tile[y][x].type = T_WALL;
+			else if (line[x] == '<')
+				l->tile[y][x].type = T_DOWNSTAIR;
 	}
 	fclose(s);
 	return;
@@ -133,20 +135,23 @@ void
 world_init(struct world *w)
 {
 	w->current = 0;
-	w->levelsz = 3;
+	w->levelsz = 4;
 	w->creaturesz = 3;
 	w->levels = calloc(w->levelsz, sizeof(struct level *));
-	for (int32_t i = 0; i < w->levelsz; i++) {
+	for (int32_t i = 0; i < w->levelsz - 1; i++) {
 		w->levels[i] = calloc(1, sizeof(struct level));
 		level_init(w->levels[i]);
 		cave_gen(w->levels[i]);
 		if (0 == i)
 			level_add_stairs(w->levels[i], true, false);
-		else if (w->levelsz - 1 == i)
-			level_add_stairs(w->levels[i], false, true);
 		else
 			level_add_stairs(w->levels[i], true, true);
 	}
+	/* The final level is the fixed hall room of Goblin King */
+	w->levels[w->levelsz - 1] = calloc(1, sizeof(struct level));
+	level_init(w->levels[w->levelsz - 1]);
+	level_load(w->levels[w->levelsz - 1], "misc/hall");
+
 	w->creatures = calloc(w->creaturesz, sizeof(struct creature *));
 	for (int32_t i = 0; i < w->creaturesz; i++) {
 		w->creatures[i] = calloc(1, sizeof(struct creature));
