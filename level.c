@@ -95,6 +95,8 @@ level_load(struct level *l, const char *path)
 		for (int x = 0; x < MAXCOLS; x++)
 			if (line[x] == '#')
 				l->tile[y][x].type = T_WALL;
+			else if (line[x] == '>')
+				l->tile[y][x].type = T_UPSTAIR;
 			else if (line[x] == '<')
 				l->tile[y][x].type = T_DOWNSTAIR;
 	}
@@ -137,10 +139,16 @@ void
 world_init(struct world *w)
 {
 	w->current = 0;
-	w->levelsz = 4;
+	w->levelsz = 5;
 	w->creaturesz = 3;
 	w->levels = calloc(w->levelsz, sizeof(struct level *));
-	for (int32_t i = 0; i < w->levelsz - 1; i++) {
+	/* The first level is the fixed entrance */
+	w->levels[0] = calloc(1, sizeof(struct level));
+	level_init(w->levels[0]);
+	level_load(w->levels[0], "misc/entry");
+	w->levels[0]->entrymessage = strdup("You enter the Goblin's Caves");
+	/* Generate three random caves */
+	for (int32_t i = 1; i < w->levelsz - 1; i++) {
 		w->levels[i] = calloc(1, sizeof(struct level));
 		level_init(w->levels[i]);
 		cave_gen(w->levels[i]);
@@ -149,7 +157,6 @@ world_init(struct world *w)
 		else
 			level_add_stairs(w->levels[i], true, true);
 	}
-	w->levels[0]->entrymessage = strdup("You enter the Goblin's Caves");
 	/* The final level is the fixed hall room of Goblin King */
 	w->levels[w->levelsz - 1] = calloc(1, sizeof(struct level));
 	level_init(w->levels[w->levelsz - 1]);
