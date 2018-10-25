@@ -197,6 +197,10 @@ main(int argc, char *argv[])
 				lp = world_current(&w);
 				break;
 			case K_DOWNSTAIR:
+				if (lp == world_first(&w)) {
+					noaction = -1;
+					break;
+				}
 				noaction = creature_climb_downstair(&p, lp, world_prev(&w));
 				lp = world_current(&w);
 				break;
