@@ -145,7 +145,8 @@ main(int argc, char *argv[])
 
 	world_init(&w);
 	lp = world_first(&w);
-	creature_init(&p, lp, R_HUMAN);
+	creature_init(&p, R_HUMAN);
+	creature_place_at_stair(&p, lp, false);
 	do {
 		int key = -1;
 		int noaction = 0;

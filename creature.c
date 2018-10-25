@@ -26,9 +26,8 @@ static void human_init(struct creature *);
 static void goblin_init(struct creature *);
 
 void
-creature_init(struct creature *c, struct level *l, enum race race)
+creature_init(struct creature *c, enum race race)
 {
-	creature_place_randomly(c, l);
 	c->race = race;
 	c->actionpoints = 0;
 	switch (race) {
