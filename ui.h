@@ -72,6 +72,9 @@ void ui_clearmessage(void);
 enum keybindings ui_keybinding_get(int);
 void ui_look(struct level *, int, int);
 void ui_look_elsewhere(struct level *, int, int);
+int ui_get_input(void);
+int ui_get_lines(void);
+int ui_get_cols(void);
 
 #endif
 

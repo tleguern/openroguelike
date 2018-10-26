@@ -444,3 +444,21 @@ ui_look_elsewhere(struct level *l, int current_y, int current_x)
 	ui_look(l, y, x);
 }
 
+int
+ui_get_input(void)
+{
+	return(wgetch(stdscr));
+}
+
+int
+ui_get_lines(void)
+{
+	return(LINES);
+}
+
+int
+ui_get_cols(void)
+{
+	return(COLS);
+}
+

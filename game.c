@@ -1,6 +1,5 @@
 #include "config.h"
 
-#include <curses.h>
 #include <err.h>
 #include <glob.h>
 #include <limits.h>
@@ -136,10 +135,11 @@ main(int argc, char *argv[])
 	rng_init();
 	ui_init();
 	/* Check for 23 because of ripoffline */
-	if ((LINES < 23) || (COLS < 80)) {
+	if ((ui_get_lines() < 23) || (ui_get_cols() < 80)) {
 		ui_cleanup();
 		fprintf(stderr, "must be displayed on 80x24 screen.");
-		fprintf(stderr, "LINES: %i, COLS: %i\n", LINES, COLS);
+		fprintf(stderr, "LINES: %i, COLS: %i\n",
+		    ui_get_lines(), ui_get_cols());
 		return(1);
 	}
 
@@ -163,7 +163,7 @@ main(int argc, char *argv[])
 		ui_draw(lp);
 		p.actionpoints += p.speed;
 		while (p.actionpoints >= 5) {
-			key = ui_keybinding_get(wgetch(stdscr));
+			key = ui_keybinding_get(ui_get_input());
 			if (key == K__MAX) {
 				continue;
 			}
