@@ -31,6 +31,7 @@
 #include "level.h"
 #include "ui.h"
 #include "creature.h"
+#include "options.h"
 #include "rng.h"
 
 static void usage(void);
@@ -179,7 +180,7 @@ main(int argc, char *argv[])
 		ui_draw(lp);
 		p.actionpoints += p.speed;
 		while (p.actionpoints >= 5) {
-			key = ui_keybinding_get(ui_get_input());
+			key = keybinding_resolve(ui_get_input());
 			if (key == K__MAX) {
 				continue;
 			}

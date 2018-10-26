@@ -21,6 +21,7 @@
 #include "creature.h"
 #include "level.h"
 #include "ui.h"
+#include "options.h"
 
 WINDOW *messagewin;
 
@@ -29,31 +30,6 @@ static void ui_reset_tileset(void);
 static int  ui_set_message_window(WINDOW *, int);
 
 static chtype tileset[T__MAX];
-
-struct optionsmap optionsmap[] = {
-	{"colors", false, ui_reset_colors},
-	{"DECgraphics", false, ui_reset_tileset},
-};
-
-struct keybindingsmap keybindingsmap[] = {
-	{"enter",	'\r'},
-	{"escape",	27}, /* Escape key*/
-	{"left",	'h'},
-	{"down",	'j'},
-	{"up",		'k'},
-	{"right",	'l'},
-	{"upleft",	'y'},
-	{"upright",	'u'},
-	{"downleft",	'b'},
-	{"downright",	'n'},
-	{"rest",	'.'},
-	{"upstair",	'>'},
-	{"downstair",	'<'},
-	{"look here",   ':'},
-	{"look elsewhere", ';'},
-	{"show help menu", '?'},
-	{"show options menu", 'O'},
-};
 
 void
 ui_cleanup(void)
@@ -140,8 +116,9 @@ ui_menu_options(void)
 	ui_message("Options menu");
 	mvwaddstr(menuwin, 0, 1, "[OPTIONS]");
 	do {
-		int key = -1;
+		int choice, key;
 
+		choice = -1;
 		for (int i = 0; i < O__MAX; i++) {
 			char cursor, x;
 
@@ -155,7 +132,7 @@ ui_menu_options(void)
 			    cursor, x, optionsmap[i].name);
 		}
 		wrefresh(menuwin);
-		key = ui_keybinding_get(wgetch(menuwin));
+		key = keybinding_resolve(wgetch(menuwin));
 		if (key == K__MAX) {
 			continue;
 		}
@@ -171,9 +148,7 @@ ui_menu_options(void)
 			hl += 1;
 			break;
 		case K_ENTER:
-			optionsmap[hl].value = !optionsmap[hl].value;
-			optionsmap[hl].func();
-			redrawwin(menuwin); /* XXX: Hum */
+			choice = hl;
 			break;
 		case K_ESCAPE:
 			exit = 1;
@@ -181,8 +156,24 @@ ui_menu_options(void)
 		default:
 			break;
 		}
-		if (exit != -1)
+		if (exit != -1) {
 			break;
+		}
+		if (choice != -1) {
+			optionsmap[choice].value = !optionsmap[choice].value;
+			switch (choice) {
+			case O_COLORS:
+				ui_reset_colors();
+				break;
+			case O_DECGRAPHICS:
+				ui_reset_tileset();
+				break;
+			case O__MAX:
+			default:
+				break;
+			}
+			redrawwin(menuwin); /* XXX: Hum */
+		}
 	} while (1);
 	delwin(menuwin);
 }
@@ -210,7 +201,7 @@ ui_menu_help(void)
 		}
 		mvwprintw(helpwin, K__MAX + 1, 1, "Escape to quit this menu");
 		wrefresh(helpwin);
-		key = ui_keybinding_get(wgetch(helpwin));
+		key = keybinding_resolve(wgetch(helpwin));
 		if (key == K__MAX) {
 			continue;
 		}
@@ -334,18 +325,6 @@ ui_reset_tileset(void)
 	/* use box_set */
 }
 
-enum keybindings
-ui_keybinding_get(int keypress)
-{
-	int key;
-
-	for (key = 0; key < K__MAX; key++) {
-		if (keypress == keybindingsmap[key].key)
-			break;
-	}
-	return(key);
-}
-
 void
 ui_look(struct level *l, int y, int x)
 {
@@ -383,7 +362,7 @@ ui_look_elsewhere(struct level *l, int current_y, int current_x)
 	do {
 		int key;
 
-		key = ui_keybinding_get(wgetch(stdscr));
+		key = keybinding_resolve(wgetch(stdscr));
 		if (key == K__MAX) {
 			continue;
 		}

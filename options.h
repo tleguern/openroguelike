@@ -14,24 +14,50 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef UI_H__
-#define UI_H__
+#ifndef OPTIONS_H__
+#define OPTIONS_H__
 
-struct level;
+enum option {
+	O_COLORS,
+	O_DECGRAPHICS,
+	O__MAX,
+};
 
-void ui_alert(const char *);
-void ui_cleanup(void);
-void ui_draw(struct level *);
-void ui_init(void);
-void ui_menu_options(void);
-void ui_menu_help(void);
-void ui_message(const char *, ...);
-void ui_clearmessage(void);
-void ui_look(struct level *, int, int);
-void ui_look_elsewhere(struct level *, int, int);
-int ui_get_input(void);
-int ui_get_lines(void);
-int ui_get_cols(void);
+struct optionsmap {
+	const char	*name;
+	bool		 value;
+};
+
+#define NONCONFIGURABLEKEYS 2
+enum keybinding {
+	K_ENTER,
+	K_ESCAPE,
+	K_LEFT,
+	K_DOWN,
+	K_UP,
+	K_RIGHT,
+	K_UPLEFT,
+	K_UPRIGHT,
+	K_DOWNLEFT,
+	K_DOWNRIGHT,
+	K_REST,
+	K_UPSTAIR,
+	K_DOWNSTAIR,
+	K_LOOKHERE,
+	K_LOOKELSEWHERE,
+	K_HELPMENU,
+	K_OPTIONMENU,
+	K__MAX,
+};
+
+struct keybindingsmap {
+	const char	*name;
+	char		 key;
+};
+
+extern struct optionsmap optionsmap[];
+extern struct keybindingsmap keybindingsmap[];
+
+enum keybinding keybinding_resolve(int);
 
 #endif
-

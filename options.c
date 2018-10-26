@@ -14,24 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef UI_H__
-#define UI_H__
+#include <stdbool.h>
 
-struct level;
+#include "options.h"
 
-void ui_alert(const char *);
-void ui_cleanup(void);
-void ui_draw(struct level *);
-void ui_init(void);
-void ui_menu_options(void);
-void ui_menu_help(void);
-void ui_message(const char *, ...);
-void ui_clearmessage(void);
-void ui_look(struct level *, int, int);
-void ui_look_elsewhere(struct level *, int, int);
-int ui_get_input(void);
-int ui_get_lines(void);
-int ui_get_cols(void);
+struct optionsmap optionsmap[] = {
+	{"colors", false},
+	{"DECgraphics", false},
+};
 
-#endif
+struct keybindingsmap keybindingsmap[] = {
+	{"enter",	'\r'},
+	{"escape",	27}, /* Escape key*/
+	{"left",	'h'},
+	{"down",	'j'},
+	{"up",		'k'},
+	{"right",	'l'},
+	{"upleft",	'y'},
+	{"upright",	'u'},
+	{"downleft",	'b'},
+	{"downright",	'n'},
+	{"rest",	'.'},
+	{"upstair",	'>'},
+	{"downstair",	'<'},
+	{"look here",   ':'},
+	{"look elsewhere", ';'},
+	{"show help menu", '?'},
+	{"show options menu", 'O'},
+};
+
+enum keybinding
+keybinding_resolve(int keypress)
+{
+	int key;
+
+	for (key = 0; key < K__MAX; key++) {
+		if (keypress == keybindingsmap[key].key)
+			break;
+	}
+	return(key);
+}
 
