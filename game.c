@@ -212,6 +212,11 @@ main(int argc, char *argv[])
 				ui_draw(lp);
 				noaction = -1;
 				break;
+			case K_LOOKELSEWHERE:
+				ui_look_elsewhere(lp, p.y, p.x);
+				ui_draw(lp);
+				noaction = -1;
+				break;
 			case K_OPTIONMENU:
 				ui_menu_options();
 				ui_draw(lp);

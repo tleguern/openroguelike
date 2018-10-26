@@ -50,6 +50,7 @@ struct keybindingsmap keybindingsmap[] = {
 	{"upstair",	'>'},
 	{"downstair",	'<'},
 	{"look here",   ':'},
+	{"look elsewhere", ';'},
 	{"show help menu", '?'},
 	{"show options menu", 'O'},
 };
@@ -350,5 +351,79 @@ ui_look(struct level *l, int y, int x)
 	wrefresh(lookwin);
 	wgetch(lookwin);
 	delwin(lookwin);
+}
+
+void
+ui_look_elsewhere(struct level *l, int current_y, int current_x)
+{
+	int y, x, exit;
+
+	exit = -1;
+	y = current_y;
+	x = current_x;
+	wmove(stdscr, y, x);
+	curs_set(2);
+	do {
+		int key;
+
+		key = ui_keybinding_get(wgetch(stdscr));
+		if (key == K__MAX) {
+			continue;
+		}
+		switch (key) {
+		case K_LEFT:
+			x -= 1;
+			break;
+		case K_DOWN:
+			y += 1;
+			break;
+		case K_UP:
+			y -= 1;
+			break;
+		case K_RIGHT:
+			x += 1;
+			break;
+		case K_UPLEFT:
+			y -= 1;
+			x -= 1;
+			break;
+		case K_UPRIGHT:
+			y -= 1;
+			x += 1;
+			break;
+		case K_DOWNLEFT:
+			y += 1;
+			x -= 1;
+			break;
+		case K_DOWNRIGHT:
+			y += 1;
+			x += 1;
+			break;
+		case K_ENTER:
+			exit = 1;
+			break;
+		default:
+			break;
+		}
+		if (exit != -1) {
+			break;
+		}
+		if (0 > y) {
+			y = 0;
+		}
+		if (0 > x) {
+			x = 0;
+		}
+		if (MAXROWS <= y) {
+			y = MAXROWS - 1;
+		}
+		if (MAXCOLS <= x) {
+			x = MAXCOLS - 1;
+		}
+		wmove(stdscr, y, x);
+		wrefresh(stdscr);
+	} while (1);
+	curs_set(0);
+	ui_look(l, y, x);
 }
 
