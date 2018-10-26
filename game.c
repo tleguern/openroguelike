@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "level.h"
@@ -106,7 +107,7 @@ config_file_read(const char *configfile)
 int
 main(int argc, char *argv[])
 {
-	int		 ch;
+	int		 ch, is_running;
 	uint32_t	 seed;
 	glob_t		 gl;
 	char		 path[PATH_MAX];
@@ -160,14 +161,15 @@ main(int argc, char *argv[])
 		return(1);
 	}
 
+	is_running = -1;
 	world_init(&w);
 	lp = world_first(&w);
 	creature_init(&p, R_HUMAN);
 	creature_place_at_stair(&p, lp, false);
 	do {
-		int key = -1;
-		int noaction = 0;
+		int key, noaction;
 
+		noaction = 0;
 		if (false == lp->visited) {
 			if (true == debug)
 				ui_message("Seed: %u", rng_get_seed());
@@ -180,32 +182,52 @@ main(int argc, char *argv[])
 		ui_draw(lp);
 		p.actionpoints += p.speed;
 		while (p.actionpoints >= 5) {
-			key = keybinding_resolve(ui_get_input());
+			if (-1 != is_running) {
+				key = is_running;
+			} else {
+				key = keybinding_resolve(ui_get_input());
+			}
 			if (key == K__MAX) {
 				continue;
 			}
 			switch (key) {
+			case K_RUNLEFT:
+				is_running = K_LEFT;
 			case K_LEFT:
 				noaction = creature_move_left(&p, lp);
 				break;
+			case K_RUNDOWN:
+				is_running = K_DOWN;
 			case K_DOWN:
 				noaction = creature_move_down(&p, lp);
 				break;
+			case K_RUNUP:
+				is_running = K_UP;
 			case K_UP:
 				noaction = creature_move_up(&p, lp);
 				break;
+			case K_RUNRIGHT:
+				is_running = K_RIGHT;
 			case K_RIGHT:
 				noaction = creature_move_right(&p, lp);
 				break;
+			case K_RUNUPLEFT:
+				is_running = K_UPLEFT;
 			case K_UPLEFT:
 				noaction = creature_move_upleft(&p, lp);
 				break;
+			case K_RUNUPRIGHT:
+				is_running = K_UPRIGHT;
 			case K_UPRIGHT:
 				noaction = creature_move_upright(&p, lp);
 				break;
+			case K_RUNDOWNLEFT:
+				is_running = K_DOWNLEFT;
 			case K_DOWNLEFT:
 				noaction = creature_move_downleft(&p, lp);
 				break;
+			case K_RUNDOWNRIGHT:
+				is_running = K_DOWNRIGHT;
 			case K_DOWNRIGHT:
 				noaction = creature_move_downright(&p, lp);
 				break;
@@ -248,8 +270,10 @@ main(int argc, char *argv[])
 				noaction = -1;
 				break;
 			}
-			if (noaction == -1)
+			if (noaction == -1) {
+				is_running = -1;
 				continue;
+			}
 			p.actionpoints -= 5;
 		}
 		/* Monsters' turn */
@@ -262,6 +286,14 @@ main(int argc, char *argv[])
 				creature_do_something(c, world_first(&w));
 				c->actionpoints -= 5;
 			}
+		}
+		/* Add a slight delay when running */
+		if (-1 != is_running) {
+			struct timespec t;
+
+			t.tv_sec = 0;
+			t.tv_nsec = 100;
+			(void)nanosleep(&t, NULL);
 		}
 	} while (1);
 	world_free(&w);

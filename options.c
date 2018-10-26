@@ -24,23 +24,31 @@ struct optionsmap optionsmap[] = {
 };
 
 struct keybindingsmap keybindingsmap[] = {
-	{"enter",	'\r'},
-	{"escape",	27}, /* Escape key*/
-	{"left",	'h'},
-	{"down",	'j'},
-	{"up",		'k'},
-	{"right",	'l'},
-	{"upleft",	'y'},
-	{"upright",	'u'},
-	{"downleft",	'b'},
-	{"downright",	'n'},
-	{"rest",	'.'},
-	{"upstair",	'>'},
-	{"downstair",	'<'},
-	{"look here",   ':'},
-	{"look elsewhere", ';'},
-	{"show help menu", '?'},
-	{"show options menu", 'O'},
+	{"enter",		'\r'},
+	{"escape",		27}, /* Escape key*/
+	{"left",		'h'},
+	{"down",		'j'},
+	{"up",			'k'},
+	{"right",		'l'},
+	{"upleft",		'y'},
+	{"upright",		'u'},
+	{"downleft",		'b'},
+	{"downright",		'n'},
+	{"run left",		'H'},
+	{"run down",		'J'},
+	{"run up",		'K'},
+	{"run right",		'L'},
+	{"run upleft",		'Y'},
+	{"run upright",		'U'},
+	{"run downleft",	'B'},
+	{"run downright",	'N'},
+	{"rest",		'.'},
+	{"upstair",		'>'},
+	{"downstair",		'<'},
+	{"look here",   	':'},
+	{"look elsewhere",	';'},
+	{"show help menu",	'?'},
+	{"show options menu",	'O'},
 };
 
 enum keybinding
