@@ -66,7 +66,22 @@ static void
 ui_tile_print(struct tile *t, int x, int y) {
 	mvaddch(y, x, tileset[t->type]);
 	if (NULL != t->creature) {
-		mvaddch(y, x, t->creature->glyphe);
+		int glyphe;
+
+		switch (t->creature->race) {
+		case R_GOBLIN:
+			glyphe = tileset[T_GOBLIN];
+			break;
+		case R_HUMAN:
+			glyphe = tileset[T_HUMAN];
+			break;
+		case R__MAX:
+		default:
+			/* Visual error meaning I forgot to assign a glyphe */
+			glyphe = 'X' | COLOR_PAIR(3);
+			break;
+		}
+		mvaddch(y, x, glyphe);
 	}
 }
 
@@ -314,6 +329,8 @@ ui_reset_tileset(void)
 		tileset[T_ULCORNER] = '#';
 		tileset[T_URCORNER] = '#';
 	}
+	tileset[T_GOBLIN] = 'g' | COLOR_PAIR(5);
+	tileset[T_HUMAN] = '@' | COLOR_PAIR(2);
 	/* use box_set */
 }
 

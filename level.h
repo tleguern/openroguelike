@@ -36,6 +36,8 @@ enum tile_type {
 	T_LRCORNER,
 	T_ULCORNER,
 	T_URCORNER,
+	T_GOBLIN,
+	T_HUMAN,
 	T__MAX,
 };
 

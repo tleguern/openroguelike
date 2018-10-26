@@ -14,11 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <stdbool.h>
 #include <stdlib.h>
-#include <curses.h>
 
 #include "level.h"
-#include "ui.h"
 #include "creature.h"
 #include "rng.h"
 
@@ -79,10 +78,10 @@ creature_place_at_stair(struct creature *c, struct level *l, bool up)
 int
 creature_move(struct creature *c, struct level *l, int row, int col)
 {
-	if (c->y + row < 0 || c->y + row >= LINES) {
+	if (c->y + row < 0 || c->y + row >= MAXROWS) {
 		return(-1);
 	}
-	if (c->x + col < 0 || c->x + col >= COLS) {
+	if (c->x + col < 0 || c->x + col >= MAXCOLS) {
 		return(-1);
 	}
 	if (tile_is_wall(&(l->tile[c->y + row][c->x + col]))) {
@@ -212,14 +211,12 @@ creature_do_something(struct creature *c, struct level *l)
 static void
 human_init(struct creature *c)
 {
-	c->glyphe = '@' | COLOR_PAIR(2);
 	c->speed = 5;
 }
 
 static void
 goblin_init(struct creature *c)
 {
-	c->glyphe = 'g' | COLOR_PAIR(5);
 	c->speed = 7;
 }
 
