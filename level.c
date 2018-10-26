@@ -14,14 +14,11 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/stat.h>
-
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <curses.h>
 
 #include "ui.h"
 #include "level.h"
