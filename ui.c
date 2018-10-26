@@ -49,6 +49,7 @@ struct keybindingsmap keybindingsmap[] = {
 	{"rest",	'.'},
 	{"upstair",	'>'},
 	{"downstair",	'<'},
+	{"look here",   ':'},
 	{"show help menu", '?'},
 	{"show options menu", 'O'},
 };
@@ -325,5 +326,29 @@ ui_keybinding_get(int keypress)
 			break;
 	}
 	return(key);
+}
+
+void
+ui_look(struct level *l, int y, int x)
+{
+	WINDOW		*lookwin;
+	const char	*message;
+	size_t		 messagez;
+
+	switch (l->tile[y][x].type) {
+	case T_WALL: message = "a solid wall made of hard rocks"; break;
+	case T_EMPTY: message = "dirt"; break;
+	case T_UPSTAIR: message = "a flight of stairs going up"; break;
+	case T_DOWNSTAIR: message = "a flight of stairs going down"; break;
+	default: message = "not sure, a monstrosity perhaps"; break;
+	}
+	messagez = strlen(message);
+	lookwin = newwin(3, messagez + 2, LINES / 2, COLS / 2 - messagez / 2);
+	wbkgd(lookwin, ' ' | COLOR_PAIR(3));
+	box(lookwin, 0, 0);
+	mvwaddstr(lookwin, 1, 1, message);
+	wrefresh(lookwin);
+	wgetch(lookwin);
+	delwin(lookwin);
 }
 

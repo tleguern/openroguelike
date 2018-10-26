@@ -46,6 +46,7 @@ enum keybindings {
 	K_REST,
 	K_UPSTAIR,
 	K_DOWNSTAIR,
+	K_LOOKHERE,
 	K_HELPMENU,
 	K_OPTIONMENU,
 	K__MAX,
@@ -68,6 +69,7 @@ void ui_menu_help(void);
 void ui_message(const char *, ...);
 void ui_clearmessage(void);
 enum keybindings ui_keybinding_get(int);
+void ui_look(struct level *, int, int);
 
 #endif
 

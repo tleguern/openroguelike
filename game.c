@@ -207,6 +207,11 @@ main(int argc, char *argv[])
 			case K_REST:
 				noaction = creature_rest(&p);
 				break;
+			case K_LOOKHERE:
+				ui_look(lp, p.y, p.x);
+				ui_draw(lp);
+				noaction = -1;
+				break;
 			case K_OPTIONMENU:
 				ui_menu_options();
 				ui_draw(lp);
