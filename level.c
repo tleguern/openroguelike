@@ -241,13 +241,36 @@ clean:
 static void
 level_add_stairs(struct level *l, bool upstair, bool downstair)
 {
+	int initial_upy, initial_upx, initial_doy, initial_dox;
 	int upy, upx, doy, dox;
 
+	initial_upy = initial_upx = initial_doy = initial_dox = -1;
+	for (int y = 1; y < MAXROWS; y++) {
+		for (int x = 1; x < MAXCOLS; x++) {
+			if (l->tile[y][x].type == T_UPSTAIR) {
+				initial_upy = y;
+				initial_upx = x;
+			}
+			if (l->tile[y][x].type == T_DOWNSTAIR) {
+				initial_doy = y;
+				initial_dox = x;
+			}
+		}
+	}
+	upy = initial_upy;
+	upx = initial_upx;
+	doy = initial_doy;
+	dox = initial_dox;
 	do {
-		upy = rng_rand_uniform(MAXROWS);
-		upx = rng_rand_uniform(MAXCOLS);
-		doy = rng_rand_uniform(MAXROWS);
-		dox = rng_rand_uniform(MAXCOLS);
+		if (-1 == initial_upy)
+			upy = rng_rand_uniform(MAXROWS);
+		if (-1 == initial_upx)
+			upx = rng_rand_uniform(MAXCOLS);
+		if (-1 == initial_doy)
+			doy = rng_rand_uniform(MAXROWS);
+		if (-1 == initial_dox)
+			dox = rng_rand_uniform(MAXCOLS);
+		fprintf(stderr, "%i %i %i %i\n", upy, upx, doy, dox);
 		/* Ensure stairs are not too close */
 		if (abs((upy + upx) - (doy + dox)) < 50)
 			continue;
