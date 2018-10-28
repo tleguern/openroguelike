@@ -20,10 +20,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ui.h"
-#include "level.h"
+#include "config.h"
 #include "creature.h"
+#include "level.h"
 #include "rng.h"
+#include "ui.h"
 
 static void level_add_stair(struct level *, bool);
 

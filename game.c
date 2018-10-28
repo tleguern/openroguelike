@@ -193,41 +193,49 @@ main(int argc, char *argv[])
 			switch (key) {
 			case K_RUNLEFT:
 				is_running = K_LEFT;
+				__attribute__((fallthrough));
 			case K_LEFT:
 				noaction = creature_move_left(&p, lp);
 				break;
 			case K_RUNDOWN:
 				is_running = K_DOWN;
+				__attribute__((fallthrough));
 			case K_DOWN:
 				noaction = creature_move_down(&p, lp);
 				break;
 			case K_RUNUP:
 				is_running = K_UP;
+				__attribute__((fallthrough));
 			case K_UP:
 				noaction = creature_move_up(&p, lp);
 				break;
 			case K_RUNRIGHT:
 				is_running = K_RIGHT;
+				__attribute__((fallthrough));
 			case K_RIGHT:
 				noaction = creature_move_right(&p, lp);
 				break;
 			case K_RUNUPLEFT:
 				is_running = K_UPLEFT;
+				__attribute__((fallthrough));
 			case K_UPLEFT:
 				noaction = creature_move_upleft(&p, lp);
 				break;
 			case K_RUNUPRIGHT:
 				is_running = K_UPRIGHT;
+				__attribute__((fallthrough));
 			case K_UPRIGHT:
 				noaction = creature_move_upright(&p, lp);
 				break;
 			case K_RUNDOWNLEFT:
 				is_running = K_DOWNLEFT;
+				__attribute__((fallthrough));
 			case K_DOWNLEFT:
 				noaction = creature_move_downleft(&p, lp);
 				break;
 			case K_RUNDOWNRIGHT:
 				is_running = K_DOWNRIGHT;
+				__attribute__((fallthrough));
 			case K_DOWNRIGHT:
 				noaction = creature_move_downright(&p, lp);
 				break;
