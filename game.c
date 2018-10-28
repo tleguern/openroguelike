@@ -165,7 +165,7 @@ main(int argc, char *argv[])
 	world_init(&w);
 	lp = world_first(&w);
 	creature_init(&p, R_HUMAN);
-	creature_place_at_stair(&p, lp, false);
+	creature_place_at_stair(&p, lp, true);
 	do {
 		int key, noaction;
 
@@ -232,15 +232,15 @@ main(int argc, char *argv[])
 				noaction = creature_move_downright(&p, lp);
 				break;
 			case K_UPSTAIR:
-				noaction = creature_climb_upstair(&p, lp, world_next(&w));
-				lp = world_current(&w);
-				break;
-			case K_DOWNSTAIR:
 				if (lp == world_first(&w)) {
 					noaction = -1;
 					break;
 				}
-				noaction = creature_climb_downstair(&p, lp, world_prev(&w));
+				noaction = creature_climb_upstair(&p, lp, world_prev(&w));
+				lp = world_current(&w);
+				break;
+			case K_DOWNSTAIR:
+				noaction = creature_climb_downstair(&p, lp, world_next(&w));
 				lp = world_current(&w);
 				break;
 			case K_REST:

@@ -207,9 +207,9 @@ level_load(struct level *l, const char *filename)
 					lx = x + position.x;
 					if ('#' == line[x]) {
 						l->tile[y][lx].type = T_WALL;
-					} else if ('>' == line[x]) {
-						l->tile[y][lx].type = T_UPSTAIR;
 					} else if ('<' == line[x]) {
+						l->tile[y][lx].type = T_UPSTAIR;
+					} else if ('>' == line[x]) {
 						l->tile[y][lx].type = T_DOWNSTAIR;
 					} else if (' ' == line[x]) {
 						l->tile[y][lx].type = T_EMPTY;
@@ -275,7 +275,7 @@ world_init(struct world *w)
 	level_init(w->levels[0]);
 	cave_gen(w->levels[0]);
 	level_load(w->levels[0], "misc/entry");
-	level_add_stairs(w->levels[0], true, false);
+	level_add_stairs(w->levels[0], false, true);
 	w->levels[0]->entrymessage = strdup("You enter the Goblin's Caves");
 	/* Generate three random caves */
 	for (int32_t i = 1; i < w->levelsz - 1; i++) {
@@ -291,7 +291,7 @@ world_init(struct world *w)
 	w->levels[w->levelsz - 1]->entrymessage =
 	    strdup("Unwelcome to the Hall of the Goblin King");
 	level_load(w->levels[w->levelsz - 1], "misc/hall");
-	level_add_stairs(w->levels[w->levelsz - 1], false, true);
+	level_add_stairs(w->levels[w->levelsz - 1], true, false);
 
 	w->creatures = calloc(w->creaturesz, sizeof(struct creature *));
 	for (int32_t i = 0; i < w->creaturesz; i++) {

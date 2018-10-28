@@ -290,8 +290,8 @@ ui_reset_tileset(void)
 	if (optionsmap[O_DECGRAPHICS].value == true) {
 		tileset[T_EMPTY] = ' ';
 		tileset[T_WALL] = '#';
-		tileset[T_UPSTAIR] = '>';
-		tileset[T_DOWNSTAIR] = '<';
+		tileset[T_UPSTAIR] = '<';
+		tileset[T_DOWNSTAIR] = '>';
 		tileset[T_HLINE] = ACS_HLINE;
 		tileset[T_VLINE] = ACS_VLINE;
 		tileset[T_BTEE] = ACS_BTEE;
@@ -306,8 +306,8 @@ ui_reset_tileset(void)
 	} else {
 		tileset[T_EMPTY] = ' ';
 		tileset[T_WALL] = '#';
-		tileset[T_UPSTAIR] = '>';
-		tileset[T_DOWNSTAIR] = '<';
+		tileset[T_UPSTAIR] = '<';
+		tileset[T_DOWNSTAIR] = '>';
 		tileset[T_HLINE] = '#';
 		tileset[T_VLINE] = '#';
 		tileset[T_BTEE] = '#';
