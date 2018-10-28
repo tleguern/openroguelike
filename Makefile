@@ -6,7 +6,7 @@ OBJS= ${SRCS:.c=.o}
 DEPS= ${SRCS:.c=.d}
 
 LDADD+= -lcurses
-CFLAGS+= -Wall -Wextra -Wno-unused-function
+CFLAGS+= -std=c99 -Wall -Wextra -Wno-unused-function
 
 .SUFFIXES: .c .o
 .PHONY: clean
