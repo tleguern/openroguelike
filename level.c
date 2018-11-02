@@ -270,7 +270,6 @@ level_add_stairs(struct level *l, bool upstair, bool downstair)
 			doy = rng_rand_uniform(MAXROWS);
 		if (-1 == initial_dox)
 			dox = rng_rand_uniform(MAXCOLS);
-		fprintf(stderr, "%i %i %i %i\n", upy, upx, doy, dox);
 		/* Ensure stairs are not too close */
 		if (abs((upy + upx) - (doy + dox)) < 50)
 			continue;
