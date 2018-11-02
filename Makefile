@@ -1,7 +1,7 @@
 include Makefile.configure
 
 PROG= roguelike
-SRCS= game.c ui.c creature.c level.c cave.c rng.c options.c compats.c
+SRCS= game.c ui.c creature.c level.c cave.c rng.c options.c compats.c world.c
 OBJS= ${SRCS:.c=.o}
 DEPS= ${SRCS:.c=.d}
 

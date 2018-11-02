@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -24,8 +25,6 @@
 #include "level.h"
 #include "creature.h"
 #include "rng.h"
-
-static void level_add_stair(struct level *, bool);
 
 struct coordinate {
 	int x;
@@ -157,6 +156,8 @@ level_load(struct level *l, const char *filename)
 		case OP_TYPE:
 			if (strcmp("cave", value) == 0) {
 				l->type = L_CAVE;
+			} else if (strcmp("static", value) == 0) {
+				l->type = L_STATIC;
 			} else {
 				errstr = "unknown type";
 				goto closeclean;
@@ -227,7 +228,7 @@ clean:
 	exit(EXIT_FAILURE);
 }
 
-static void
+void
 level_add_stairs(struct level *l, bool upstair, bool downstair)
 {
 	int initial_upy, initial_upx, initial_doy, initial_dox;
@@ -272,85 +273,5 @@ level_add_stairs(struct level *l, bool upstair, bool downstair)
 			l->tile[doy][dox].type = T_DOWNSTAIR;
 		break;
 	} while (1);
-}
-
-void
-world_init(struct world *w)
-{
-	w->current = 0;
-	w->levelsz = 5;
-	w->creaturesz = 3;
-	w->levels = calloc(w->levelsz, sizeof(struct level *));
-	/* The first level is the fixed entrance */
-	w->levels[0] = calloc(1, sizeof(struct level));
-	level_init(w->levels[0]);
-	cave_gen(w->levels[0]);
-	level_load(w->levels[0], "misc/entry");
-	level_add_stairs(w->levels[0], false, true);
-	w->levels[0]->entrymessage = strdup("You enter the Goblin's Caves");
-	/* Generate three random caves */
-	for (int32_t i = 1; i < w->levelsz - 1; i++) {
-		w->levels[i] = calloc(1, sizeof(struct level));
-		level_init(w->levels[i]);
-		cave_gen(w->levels[i]);
-		level_add_stairs(w->levels[i], true, true);
-	}
-	/* The final level is the fixed hall room of Goblin King */
-	w->levels[w->levelsz - 1] = calloc(1, sizeof(struct level));
-	level_init(w->levels[w->levelsz - 1]);
-	cave_gen(w->levels[w->levelsz - 1]);
-	w->levels[w->levelsz - 1]->entrymessage =
-	    strdup("Unwelcome to the Hall of the Goblin King");
-	level_load(w->levels[w->levelsz - 1], "misc/hall");
-	level_add_stairs(w->levels[w->levelsz - 1], true, false);
-
-	w->creatures = calloc(w->creaturesz, sizeof(struct creature *));
-	for (int32_t i = 0; i < w->creaturesz; i++) {
-		w->creatures[i] = calloc(1, sizeof(struct creature));
-		creature_init(w->creatures[i], R_GOBLIN);
-		creature_place_randomly(w->creatures[i], w->levels[0]);
-	}
-}
-
-struct level *
-world_first(struct world *w)
-{
-	return w->levels[0];
-}
-
-struct level *
-world_next(struct world *w)
-{
-	if (w->current + 1 < w->levelsz)
-		w->current += 1;
-	return world_current(w);
-}
-
-struct level *
-world_prev(struct world *w)
-{
-	if (w->current - 1 >= 0)
-		w->current -= 1;
-	return world_current(w);
-}
-
-struct level *
-world_current(struct world *w)
-{
-	return w->levels[w->current];
-}
-
-void
-world_free(struct world *w)
-{
-	for (int32_t i = 0; i < w->levelsz; i++) {
-		free(w->levels[i]->entrymessage);
-		free(w->levels[i]);
-		w->levels[i] = NULL;
-	}
-	free(w->levels);
-	w->levels = NULL;
-	w->levelsz = 0;
-	w->current = -1;
 }
 

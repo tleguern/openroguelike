@@ -14,50 +14,26 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef LEVEL_H__
-#define LEVEL_H__
+#ifndef WORLD_H__
+#define WORLD_H__
 
-#define MAXROWS 22
-#define MAXCOLS 80
+struct level;
+struct creature;
 
-enum tile_type {
-	T_EMPTY,
-	T_WALL,
-	T_UPSTAIR,
-	T_DOWNSTAIR,
-	T_GOBLIN,
-	T_HUMAN,
-	T__MAX,
+struct world {
+	int32_t		  levelsz;
+	int32_t		  creaturesz;
+	int32_t	  	  current;
+	struct level	**levels;
+	struct creature **creatures;
 };
 
-struct tile {
-	enum tile_type	 type;
-	struct creature	*creature;
-};
-
-enum level_type {
-	L_NONE,
-	L_CAVE,
-	L_STATIC,
-	L__MAX,
-};
-
-struct level {
-	enum level_type	 type;
-	bool		 visited;
-	char		*entrymessage;
-	struct tile	 tile[MAXROWS][MAXCOLS];
-};
-
-bool tile_is_empty(struct tile *);
-bool tile_is_wall(struct tile *);
-void tile_print(struct tile *, int, int);
-
-void level_init(struct level *);
-void level_load(struct level *, const char *);
-void level_draw(struct level *);
-void level_add_stairs(struct level *, bool, bool);
-
-void cave_gen(struct level *);
+void world_init(struct world *);
+void world_add(struct world *, struct level *);
+void world_free(struct world *);
+struct level *world_first(struct world *);
+struct level *world_prev(struct world *);
+struct level *world_next(struct world *);
+struct level *world_current(struct world *);
 
 #endif

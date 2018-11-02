@@ -33,6 +33,7 @@
 #include "ui.h"
 #include "creature.h"
 #include "options.h"
+#include "world.h"
 #include "rng.h"
 
 static void usage(void);
