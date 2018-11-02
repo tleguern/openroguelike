@@ -81,18 +81,7 @@ tile_is_empty(struct tile *t) {
 
 bool
 tile_is_wall(struct tile *t) {
-	if (T_WALL == t->type
-	    || T_HLINE == t->type
-	    || T_VLINE == t->type
-	    || T_BTEE == t->type
-	    || T_TTEE == t->type
-	    || T_LTEE == t->type
-	    || T_RTEE == t->type
-	    || T_CROSS == t->type
-	    || T_LLCORNER == t->type
-	    || T_LRCORNER == t->type
-	    || T_ULCORNER == t->type
-	    || T_URCORNER == t->type)
+	if (T_WALL == t->type)
 		return(true);
 	return(false);
 }

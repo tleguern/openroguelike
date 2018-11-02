@@ -19,7 +19,6 @@
 
 enum option {
 	O_COLORS,
-	O_DECGRAPHICS,
 	O__MAX,
 };
 

@@ -20,7 +20,6 @@
 
 struct optionsmap optionsmap[] = {
 	{"colors", false},
-	{"DECgraphics", false},
 };
 
 struct keybindingsmap keybindingsmap[] = {
