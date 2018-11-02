@@ -26,11 +26,6 @@
 #include "creature.h"
 #include "rng.h"
 
-struct coordinate {
-	int x;
-	int y;
-};
-
 enum operand {
 	OP_NAME,
 	OP_TYPE,

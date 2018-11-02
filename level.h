@@ -49,6 +49,11 @@ struct level {
 	struct tile	 tile[MAXROWS][MAXCOLS];
 };
 
+struct coordinate {
+	int x;
+	int y;
+};
+
 bool tile_is_empty(struct tile *);
 bool tile_is_wall(struct tile *);
 void tile_print(struct tile *, int, int);
