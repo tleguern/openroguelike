@@ -270,3 +270,19 @@ level_add_stairs(struct level *l, bool upstair, bool downstair)
 	} while (1);
 }
 
+int
+level_find(struct level *l, enum tile_type tile, struct coordinate *coord)
+{
+	for (int y = 1; y < MAXROWS; y++) {
+		for (int x = 1; x < MAXCOLS; x++) {
+			if (tile == l->tile[y][x].type) {
+				coord->y = y;
+				coord->x = x;
+				return(0);
+			}
+		}
+	}
+	coord->y = -1;
+	coord->x = -1;
+	return(-1);
+}
