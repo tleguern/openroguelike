@@ -14,6 +14,7 @@
 static uint32_t rng_storage[4096];
 static uint32_t rng_counter = 4095;
 static uint32_t rng_seed = 0;
+static uint32_t rng_carry = 0;
 
 /*
  * This is interesting in cases such as save file or tests.
@@ -51,6 +52,7 @@ rng_init(void)
 #endif
 	}
 	seed = rng_seed;
+	rng_carry = seed;
 	for (i = 0; i < (sizeof(rng_storage) / sizeof(uint32_t)); i++) {
 		rng_storage[i] = seed;
 		seed = seed * 1664525 + 1013904223;
@@ -67,12 +69,12 @@ rng_rand(void)
 	uint32_t x;
 
 	rng_counter = (rng_counter + 1) & 4095;
-	t = 18782LL * rng_storage[rng_counter] + rng_seed;
-	rng_seed = (t >> 32);
-	x = (uint32_t)(t + rng_seed);
-	if (x < rng_seed) {
+	t = 18782LL * rng_storage[rng_counter] + rng_carry;
+	rng_carry = (t >> 32);
+	x = (uint32_t)(t + rng_carry);
+	if (x < rng_carry) {
 		x += 1;
-		rng_seed += 1;
+		rng_carry += 1;
 	}
 	rng_storage[rng_counter] = 0xfffffffe - x;
 	return(rng_storage[rng_counter]);
