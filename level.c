@@ -15,16 +15,19 @@
  */
 
 #include <errno.h>
-#include <string.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include "ui.h"
-#include "level.h"
+#include <sys/types.h>
+
+#include "config.h"
 #include "creature.h"
+#include "level.h"
 #include "rng.h"
+#include "ui.h"
 
 enum operand {
 	OP_NAME,

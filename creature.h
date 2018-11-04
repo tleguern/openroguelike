@@ -17,6 +17,8 @@
 #ifndef CREATURE_H__
 #define CREATURE_H__
 
+#include <stdbool.h>
+
 struct level;
 
 enum race {

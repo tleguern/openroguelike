@@ -17,6 +17,8 @@
 #ifndef OPTIONS_H__
 #define OPTIONS_H__
 
+#include <stdbool.h>
+
 enum option {
 	O_COLORS,
 	O__MAX,
