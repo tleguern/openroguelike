@@ -17,6 +17,9 @@
 #ifndef LEVEL_H__
 #define LEVEL_H__
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #define MAXROWS 22
 #define MAXCOLS 80
 
