@@ -24,7 +24,7 @@
 #include "options.h"
 #include "ui.h"
 
-WINDOW *messagewin;
+static WINDOW *messagewin;
 
 static void ui_reset_colors(void);
 static void ui_reset_tileset(void);
