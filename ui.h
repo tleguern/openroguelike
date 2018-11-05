@@ -17,6 +17,8 @@
 #ifndef UI_H__
 #define UI_H__
 
+#include <time.h>
+
 struct level;
 
 void ui_alert(const char *);
@@ -32,6 +34,7 @@ void ui_look_elsewhere(struct level *, int, int);
 int ui_get_input(void);
 int ui_get_lines(void);
 int ui_get_cols(void);
+void ui_pause(time_t, long);
 
 #endif
 

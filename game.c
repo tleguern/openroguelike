@@ -298,11 +298,7 @@ main(int argc, char *argv[])
 		}
 		/* Add a slight delay when running */
 		if (-1 != is_running) {
-			struct timespec t;
-
-			t.tv_sec = 0;
-			t.tv_nsec = 100;
-			(void)nanosleep(&t, NULL);
+			ui_pause(0, 100);
 		}
 	} while (1);
 	world_free(&w);

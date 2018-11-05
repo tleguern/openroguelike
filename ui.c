@@ -14,14 +14,15 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <curses.h>
 #include <stdarg.h>
 #include <string.h>
-#include <curses.h>
+#include <time.h>
 
 #include "creature.h"
 #include "level.h"
-#include "ui.h"
 #include "options.h"
+#include "ui.h"
 
 WINDOW *messagewin;
 
@@ -408,3 +409,12 @@ ui_get_cols(void)
 	return(COLS);
 }
 
+void
+ui_pause(time_t sec, long nsec)
+{
+	struct timespec t;
+
+	t.tv_sec = sec;
+	t.tv_nsec = nsec;
+	(void)nanosleep(&t, NULL);
+}
