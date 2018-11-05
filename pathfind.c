@@ -237,38 +237,49 @@ main(int argc, char *argv[])
 
 		y = cq.queue[elem].y;
 		x = cq.queue[elem].x;
+		if (-1 == y || -1 == x) {
+			continue;
+		}
 		counter = cq.counter[elem];
 		ui_draw2(&l, &cq);
 		counter += 1;
-		if (tile_is_empty(&(l.tile[y - 1][x]))
+		if (0 != y
+		    && tile_is_empty(&(l.tile[y - 1][x]))
 		    && -1 == coordqueue_exists(&cq, y - 1, x, counter)) {
 			coordqueue_add(&cq, y - 1, x, counter);
 		}
-		if (tile_is_empty(&(l.tile[y - 1][x + 1]))
+		if (0 != y && MAXCOLS != x
+		    && tile_is_empty(&(l.tile[y - 1][x + 1]))
 		    && -1 == coordqueue_exists(&cq, y - 1, x + 1, counter)) {
 			coordqueue_add(&cq, y - 1, x + 1, counter);
 		}
-		if (tile_is_empty(&(l.tile[y][x + 1]))
+		if (MAXCOLS != x
+		    && tile_is_empty(&(l.tile[y][x + 1]))
 		    && -1 == coordqueue_exists(&cq, y, x + 1, counter)) {
 			coordqueue_add(&cq, y, x + 1, counter);
 		}
-		if (tile_is_empty(&(l.tile[y + 1][x + 1]))
+		if (MAXROWS != y && MAXCOLS != x
+		    && tile_is_empty(&(l.tile[y + 1][x + 1]))
 		    && -1 == coordqueue_exists(&cq, y + 1, x + 1, counter)) {
 			coordqueue_add(&cq, y + 1, x + 1, counter);
 		}
-		if (tile_is_empty(&(l.tile[y + 1][x]))
+		if (MAXROWS != y
+		    && tile_is_empty(&(l.tile[y + 1][x]))
 		    && -1 == coordqueue_exists(&cq, y + 1, x, counter)) {
 			coordqueue_add(&cq, y + 1, x, counter);
 		}
-		if (tile_is_empty(&(l.tile[y + 1][x - 1]))
+		if (MAXROWS != y && 0 != x
+		    && tile_is_empty(&(l.tile[y + 1][x - 1]))
 		    && -1 == coordqueue_exists(&cq, y + 1, x - 1, counter)) {
 			coordqueue_add(&cq, y + 1, x - 1, counter);
 		}
-		if (tile_is_empty(&(l.tile[y][x - 1]))
+		if (0 != x
+		    && tile_is_empty(&(l.tile[y][x - 1]))
 		    && -1 == coordqueue_exists(&cq, y, x - 1, counter)) {
 			coordqueue_add(&cq, y, x - 1, counter);
 		}
-		if (tile_is_empty(&(l.tile[y - 1][x - 1]))
+		if (0 != y && 0 != x
+		    && tile_is_empty(&(l.tile[y - 1][x - 1]))
 		    && -1 == coordqueue_exists(&cq, y - 1, x - 1, counter)) {
 			coordqueue_add(&cq, y - 1, x - 1, counter);
 		}
