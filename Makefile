@@ -17,7 +17,11 @@ CFLAGS+= -std=c99 -Wall -Wextra -Wno-unused-function
 ${PROG}: ${OBJS}
 	${CC} ${LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
+PATHFINDOBJ= pathfind.o ui.o level.o rng.o options.o compats.o
+pathfind: ${PATHFINDOBJ}
+	${CC} ${LDFLAGS} -o $@ ${PATHFINDOBJ} ${LDADD}
+
 clean:
-	rm -f -- ${PROG} ${OBJS} ${DEPS}
+	rm -f -- ${PROG} ${OBJS} ${DEPS} pathfind pathfind.o
 
 -include *.d

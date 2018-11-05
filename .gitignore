@@ -1,5 +1,6 @@
 *.o
 roguelike
+pathfind
 *.core
 *.d
 Makefile.configure
