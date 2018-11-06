@@ -203,7 +203,7 @@ main(int argc, char *argv[])
 	struct coordinate start, end;
 	struct coordqueue cq;
 	char *levelpath;
-	int ch;
+	int ch, found;
 
 	while ((ch = getopt(argc, argv, "")) != -1) {
 		switch (ch) {
@@ -285,8 +285,26 @@ main(int argc, char *argv[])
 		}
 		ui_pause(0, 100);
 	}
+	found = -1;
+	for (int elem = cq.queuez; elem >= 0; elem--) {
+		int y, x;
+
+		y = cq.queue[elem].y;
+		x = cq.queue[elem].x;
+		if (-1 == cq.queue[elem].y) {
+			continue;
+		}
+		if (y == end.y && x == end.x) {
+			found = elem;
+			break;
+		}
+	}
+	if (-1 == found) {
+		ui_alert("This level is unwinnable");
+	}
+	ui_draw2(&l, &cq);
 	coordqueue_free(&cq);
-	ui_pause(5, 0);
+	ui_pause(3, 0);
 	ui_cleanup();
 	return(0);
 }
