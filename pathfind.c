@@ -37,6 +37,7 @@ int coordqueue_size(struct coordqueue *);
 void coordqueue_print(struct coordqueue *);
 int coordqueue_exists(struct coordqueue *, int, int, int);
 int coordqueue_get_counter_at_coord(struct coordqueue *, int, int);
+int coordqueue_get_elem_with_coord(struct coordqueue *, int, int, int);
 int coordqueue_grow(struct coordqueue *);
 int coordqueue_add(struct coordqueue *, int, int, int);
 int coordqueue_init(struct coordqueue *);
@@ -88,6 +89,21 @@ coordqueue_get_counter_at_coord(struct coordqueue *cq, int y, int x)
 		}
 		if (y == cq->queue[i].y && x == cq->queue[i].x) {
 			return(cq->counter[i]);
+		}
+	}
+	return(-1);
+}
+
+int
+coordqueue_get_elem_with_coord(struct coordqueue *cq, int y, int x, int counter)
+{
+	for (size_t i = 0; i < cq->queuez; i++) {
+		if (-1 == cq->queue[i].y) {
+			continue;
+		}
+		if (y == cq->queue[i].y && x == cq->queue[i].x
+		    && counter == cq->counter[i]) {
+			return(i);
 		}
 	}
 	return(-1);
@@ -230,6 +246,13 @@ main(int argc, char *argv[])
 	level_find(&l, T_UPSTAIR, &start);
 	level_find(&l, T_DOWNSTAIR, &end);
 
+	/*
+	 * Starting from (start.y, start.x) explore every adjacent cell and
+	 * count the number of steps required to reach it.
+	 * Do not insert a new position if the tested cell is out of
+	 * the screen, is a wall or other unreachable type, or if a shorter path
+	 * a already been found.
+	 */
 	coordqueue_init(&cq);
 	coordqueue_add(&cq, start.y, start.x, 0);
 	for (int elem = 0; elem < coordqueue_size(&cq); elem++) {
@@ -285,6 +308,7 @@ main(int argc, char *argv[])
 		}
 		ui_pause(0, 100);
 	}
+	/* Find the target destination in the coordqueue */
 	found = -1;
 	for (int elem = cq.queuez; elem >= 0; elem--) {
 		int y, x;
@@ -301,10 +325,46 @@ main(int argc, char *argv[])
 	}
 	if (-1 == found) {
 		ui_alert("This level is unwinnable");
+		ui_draw2(&l, &cq);
+		coordqueue_free(&cq);
+		ui_cleanup();
+		return(-1);
 	}
+	/* Starting from the target destination find the shortest path back */
+	do {
+		int y, x, counter, smallest, elem;
+
+		elem = found;
+		y = cq.queue[elem].y;
+		x = cq.queue[elem].x;
+		counter = 0;
+		smallest = INT16_MAX;
+		for (int yaxes = -1; yaxes <= 1; yaxes++) {
+			for (int xaxes = -1; xaxes <= 1; xaxes++) {
+				if (0 == yaxes && 0 == xaxes) {
+					continue;
+				}
+				counter = coordqueue_get_counter_at_coord(&cq,
+				    y + yaxes, x + xaxes);
+				if (-1 == counter || counter > smallest) {
+					continue;
+				}
+				smallest = counter;
+				found = coordqueue_get_elem_with_coord(&cq,
+				    y + yaxes, x + xaxes, counter);
+			}
+		}
+		cq.counter[found] = -1;
+		ui_draw2(&l, &cq);
+		ui_pause(0, 300);
+		/* The first element in the coordqueue is the starting cell */
+		if (0 == found) {
+			break;
+		}
+	} while(true);
 	ui_draw2(&l, &cq);
 	coordqueue_free(&cq);
-	ui_pause(3, 0);
+	(void)ui_get_input();
 	ui_cleanup();
 	return(0);
 }
