@@ -15,51 +15,18 @@
  */
 
 #include "config.h"
-#include <curses.h>
-#include <err.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
 
 #include "level.h"
-#include "ui.h"
-
-struct coordqueue {
-	size_t			 queuez;
-	struct coordinate	*queue;
-	int			*counter;
-};
-
-int coordqueue_size(struct coordqueue *);
-void coordqueue_print(struct coordqueue *);
-int coordqueue_exists(struct coordqueue *, int, int, int);
-int coordqueue_get_counter_at_coord(struct coordqueue *, int, int);
-int coordqueue_get_elem_with_coord(struct coordqueue *, int, int, int);
-int coordqueue_grow(struct coordqueue *);
-int coordqueue_add(struct coordqueue *, int, int, int);
-int coordqueue_init(struct coordqueue *);
-void coordqueue_free(struct coordqueue *);
-
-static void usage(void);
+#include "pathfind.h"
 
 int
 coordqueue_size(struct coordqueue *cq)
 {
 	return(cq->queuez);
-}
-
-void
-coordqueue_print(struct coordqueue *cq)
-{
-	for (size_t i = 0; i < cq->queuez; i++) {
-		printf("%2zu: (%i, %i, %i)\n", i,
-		    cq->queue[i].y,
-		    cq->queue[i].x,
-		    cq->counter[i]);
-	}
 }
 
 int
@@ -125,7 +92,6 @@ coordqueue_grow(struct coordqueue *cq)
 		cq->queue = NULL;
 		cq->counter = NULL;
 		cq->queuez = -1;
-		warn("reallocarray1");
 		return(-1);
 	}
 	cq->queue = tempq;
@@ -162,7 +128,6 @@ coordqueue_init(struct coordqueue *cq)
 	cq->queue = reallocarray(NULL, cq->queuez, sizeof(struct coordinate));
 	cq->counter = reallocarray(NULL, cq->queuez, sizeof(int));
 	if (NULL == cq->queue) {
-		warn("reallocarray");
 		return(-1);
 	}
 	for (size_t i = 0; i < cq->queuez; i++) {
@@ -183,78 +148,22 @@ coordqueue_free(struct coordqueue *cq)
 	cq->queuez = -1;
 }
 
-static void
-ui_draw2(struct level *l, struct coordqueue *cq)
+bool
+are_coordinate_reachable(struct level *l, struct coordinate *start, struct coordinate *end)
 {
-	int counter;
-	int tileset[T__MAX];
-
-	tileset[T_EMPTY] = ' ';
-	tileset[T_WALL] = '#';
-	tileset[T_UPSTAIR] = '<';
-	tileset[T_DOWNSTAIR] = '>';
-	werase(stdscr);
-	/* draw main screen */
-	for (int y = 0; y < MAXROWS; ++y) {
-		for (int x = 0; x < MAXCOLS; ++x) {
-			counter = coordqueue_get_counter_at_coord(cq, y, x);
-			if (-1 == counter) {
-				mvaddch(y, x, tileset[l->tile[y][x].type]);
-			} else {
-				if (counter >= 10) {
-					counter = counter % 10;
-				}
-				mvaddch(y, x, counter + 48);
-			}
-		}
-	}
-	wnoutrefresh(stdscr);
-	doupdate();
-}
-
-int
-main(int argc, char *argv[])
-{
-	struct level l;
-	struct coordinate start, end;
 	struct coordqueue cq;
-	char *levelpath;
-	int ch, found;
-
-	while ((ch = getopt(argc, argv, "")) != -1) {
-		switch (ch) {
-		default:
-			usage();
-		}
-	}
-	argc -= optind;
-	argv += optind;
-	if (argc != 1) {
-		warnx("level path expected");
-		usage();
-	}
-	levelpath = argv[0];
-
-	ui_init();
-	level_init(&l);
-	level_load(&l, levelpath);
-	if (L_STATIC != l.type) {
-		warnx("only entirely static levels are allowed");
-		ui_cleanup();
-		return(1);
-	}
-	level_find(&l, T_UPSTAIR, &start);
-	level_find(&l, T_DOWNSTAIR, &end);
+	int found;
 
 	/*
-	 * Starting from (start.y, start.x) explore every adjacent cell and
+	 * Starting from (start->y, start->x) explore every adjacent cell and
 	 * count the number of steps required to reach it.
 	 * Do not insert a new position if the tested cell is out of
 	 * the screen, is a wall or other unreachable type, or if a shorter path
 	 * a already been found.
 	 */
 	coordqueue_init(&cq);
-	coordqueue_add(&cq, start.y, start.x, 0);
+	coordqueue_add(&cq, start->y, start->x, 0);
+
 	for (int elem = 0; elem < coordqueue_size(&cq); elem++) {
 		int y, x, counter;
 
@@ -264,49 +173,47 @@ main(int argc, char *argv[])
 			continue;
 		}
 		counter = cq.counter[elem];
-		ui_draw2(&l, &cq);
 		counter += 1;
 		if (0 != y
-		    && tile_is_empty(&(l.tile[y - 1][x]))
+		    && tile_is_empty(&(l->tile[y - 1][x]))
 		    && -1 == coordqueue_exists(&cq, y - 1, x, counter)) {
 			coordqueue_add(&cq, y - 1, x, counter);
 		}
 		if (0 != y && MAXCOLS != x
-		    && tile_is_empty(&(l.tile[y - 1][x + 1]))
+		    && tile_is_empty(&(l->tile[y - 1][x + 1]))
 		    && -1 == coordqueue_exists(&cq, y - 1, x + 1, counter)) {
 			coordqueue_add(&cq, y - 1, x + 1, counter);
 		}
 		if (MAXCOLS != x
-		    && tile_is_empty(&(l.tile[y][x + 1]))
+		    && tile_is_empty(&(l->tile[y][x + 1]))
 		    && -1 == coordqueue_exists(&cq, y, x + 1, counter)) {
 			coordqueue_add(&cq, y, x + 1, counter);
 		}
 		if (MAXROWS != y && MAXCOLS != x
-		    && tile_is_empty(&(l.tile[y + 1][x + 1]))
+		    && tile_is_empty(&(l->tile[y + 1][x + 1]))
 		    && -1 == coordqueue_exists(&cq, y + 1, x + 1, counter)) {
 			coordqueue_add(&cq, y + 1, x + 1, counter);
 		}
 		if (MAXROWS != y
-		    && tile_is_empty(&(l.tile[y + 1][x]))
+		    && tile_is_empty(&(l->tile[y + 1][x]))
 		    && -1 == coordqueue_exists(&cq, y + 1, x, counter)) {
 			coordqueue_add(&cq, y + 1, x, counter);
 		}
 		if (MAXROWS != y && 0 != x
-		    && tile_is_empty(&(l.tile[y + 1][x - 1]))
+		    && tile_is_empty(&(l->tile[y + 1][x - 1]))
 		    && -1 == coordqueue_exists(&cq, y + 1, x - 1, counter)) {
 			coordqueue_add(&cq, y + 1, x - 1, counter);
 		}
 		if (0 != x
-		    && tile_is_empty(&(l.tile[y][x - 1]))
+		    && tile_is_empty(&(l->tile[y][x - 1]))
 		    && -1 == coordqueue_exists(&cq, y, x - 1, counter)) {
 			coordqueue_add(&cq, y, x - 1, counter);
 		}
 		if (0 != y && 0 != x
-		    && tile_is_empty(&(l.tile[y - 1][x - 1]))
+		    && tile_is_empty(&(l->tile[y - 1][x - 1]))
 		    && -1 == coordqueue_exists(&cq, y - 1, x - 1, counter)) {
 			coordqueue_add(&cq, y - 1, x - 1, counter);
 		}
-		ui_pause(0, 100);
 	}
 	/* Find the target destination in the coordqueue */
 	found = -1;
@@ -318,61 +225,15 @@ main(int argc, char *argv[])
 		if (-1 == cq.queue[elem].y) {
 			continue;
 		}
-		if (y == end.y && x == end.x) {
+		if (y == end->y && x == end->x) {
 			found = elem;
 			break;
 		}
 	}
-	if (-1 == found) {
-		ui_alert("This level is unwinnable");
-		ui_draw2(&l, &cq);
-		coordqueue_free(&cq);
-		ui_cleanup();
-		return(-1);
-	}
-	/* Starting from the target destination find the shortest path back */
-	do {
-		int y, x, counter, smallest, elem;
-
-		elem = found;
-		y = cq.queue[elem].y;
-		x = cq.queue[elem].x;
-		counter = 0;
-		smallest = INT16_MAX;
-		for (int yaxes = -1; yaxes <= 1; yaxes++) {
-			for (int xaxes = -1; xaxes <= 1; xaxes++) {
-				if (0 == yaxes && 0 == xaxes) {
-					continue;
-				}
-				counter = coordqueue_get_counter_at_coord(&cq,
-				    y + yaxes, x + xaxes);
-				if (-1 == counter || counter > smallest) {
-					continue;
-				}
-				smallest = counter;
-				found = coordqueue_get_elem_with_coord(&cq,
-				    y + yaxes, x + xaxes, counter);
-			}
-		}
-		cq.counter[found] = -1;
-		ui_draw2(&l, &cq);
-		ui_pause(0, 300);
-		/* The first element in the coordqueue is the starting cell */
-		if (0 == found) {
-			break;
-		}
-	} while(true);
-	ui_draw2(&l, &cq);
 	coordqueue_free(&cq);
-	(void)ui_get_input();
-	ui_cleanup();
-	return(0);
-}
-
-static void
-usage(void)
-{
-	fprintf(stderr, "usage: %s file\n", getprogname());
-	exit(1);
+	if (-1 == found) {
+		return(false);
+	}
+	return(true);
 }
 

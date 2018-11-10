@@ -26,6 +26,7 @@
 #include "config.h"
 #include "creature.h"
 #include "level.h"
+#include "pathfind.h"
 #include "rng.h"
 #include "ui.h"
 
@@ -227,48 +228,67 @@ clean:
 }
 
 void
-level_add_stairs(struct level *l, bool upstair, bool downstair)
+coordinate_init(struct coordinate *c)
 {
-	int initial_upy, initial_upx, initial_doy, initial_dox;
-	int upy, upx, doy, dox;
+	c->y = -1;
+	c->x = -1;
+}
 
-	initial_upy = initial_upx = initial_doy = initial_dox = -1;
+void
+coordinate_copy(struct coordinate *dest, struct coordinate *src)
+{
+	dest->y = src->y;
+	dest->x = src->x;
+}
+
+void
+level_add_stairs(struct level *l, bool build_upstair, bool build_downstair)
+{
+	struct coordinate upstair, downstair;
+	struct coordinate existing_upstair, existing_downstair;
+
+	coordinate_init(&existing_upstair);
+	coordinate_init(&existing_downstair);
+	/*
+	 * Look if stairs are already present on the map, which could happen
+	 * with level_load().
+	*/
 	for (int y = 1; y < MAXROWS; y++) {
 		for (int x = 1; x < MAXCOLS; x++) {
 			if (l->tile[y][x].type == T_UPSTAIR) {
-				initial_upy = y;
-				initial_upx = x;
+				existing_upstair.y = y;
+				existing_upstair.x = x;
 			}
 			if (l->tile[y][x].type == T_DOWNSTAIR) {
-				initial_doy = y;
-				initial_dox = x;
+				existing_downstair.y = y;
+				existing_downstair.x = x;
 			}
 		}
 	}
-	upy = initial_upy;
-	upx = initial_upx;
-	doy = initial_doy;
-	dox = initial_dox;
+	coordinate_copy(&upstair, &existing_upstair);
+	coordinate_copy(&downstair, &existing_downstair);
 	do {
-		if (-1 == initial_upy)
-			upy = rng_rand_uniform(MAXROWS);
-		if (-1 == initial_upx)
-			upx = rng_rand_uniform(MAXCOLS);
-		if (-1 == initial_doy)
-			doy = rng_rand_uniform(MAXROWS);
-		if (-1 == initial_dox)
-			dox = rng_rand_uniform(MAXCOLS);
+		if (-1 == existing_upstair.y)
+			upstair.y = rng_rand_uniform(MAXROWS);
+		if (-1 == existing_upstair.x)
+			upstair.x = rng_rand_uniform(MAXCOLS);
+		if (-1 == existing_downstair.y)
+			downstair.y = rng_rand_uniform(MAXROWS);
+		if (-1 == existing_downstair.x)
+			downstair.x = rng_rand_uniform(MAXCOLS);
 		/* Ensure stairs are not too close */
-		if (abs((upy + upx) - (doy + dox)) < 50)
+		if (abs((upstair.y + upstair.x) - (downstair.y + downstair.x)) < 50)
 			continue;
-		if (! tile_is_empty(&(l->tile[upy][upx])))
+		if (! tile_is_empty(&(l->tile[upstair.y][upstair.x])))
 			continue;
-		if (! tile_is_empty(&(l->tile[doy][dox])))
+		if (! tile_is_empty(&(l->tile[downstair.y][downstair.x])))
 			continue;
-		if (upstair)
-			l->tile[upy][upx].type = T_UPSTAIR;
-		if (downstair)
-			l->tile[doy][dox].type = T_DOWNSTAIR;
+		if (false == are_coordinate_reachable(l, &upstair, &downstair))
+			continue;
+		if (build_upstair)
+			l->tile[upstair.y][upstair.x].type = T_UPSTAIR;
+		if (build_downstair)
+			l->tile[downstair.y][downstair.x].type = T_DOWNSTAIR;
 		break;
 	} while (1);
 }

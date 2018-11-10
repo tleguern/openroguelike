@@ -69,4 +69,7 @@ int level_find(struct level *, enum tile_type, struct coordinate *);
 
 void cave_gen(struct level *);
 
+void coordinate_copy(struct coordinate *, struct coordinate *);
+void coordinate_init(struct coordinate *);
+
 #endif

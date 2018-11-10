@@ -1,7 +1,7 @@
 include Makefile.configure
 
 PROG= roguelike
-SRCS= game.c ui.c creature.c level.c cave.c rng.c options.c compats.c world.c
+SRCS= game.c ui.c creature.c level.c cave.c rng.c options.c compats.c world.c pathfind.c
 OBJS= ${SRCS:.c=.o}
 DEPS= ${SRCS:.c=.d}
 
@@ -17,11 +17,11 @@ CFLAGS+= -std=c99 -Wall -Wextra -Wno-unused-function
 ${PROG}: ${OBJS}
 	${CC} ${LDFLAGS} -o $@ ${OBJS} ${LDADD}
 
-PATHFINDOBJ= pathfind.o ui.o level.o rng.o options.o compats.o
-pathfind: ${PATHFINDOBJ}
-	${CC} ${LDFLAGS} -o $@ ${PATHFINDOBJ} ${LDADD}
+PATHFINDDEMOOBJS= pathfind-demo.o ui.o level.o rng.o options.o compats.o pathfind.o
+pathfind-demo: ${PATHFINDDEMOOBJS}
+	${CC} ${LDFLAGS} -o $@ ${PATHFINDDEMOOBJS} ${LDADD}
 
 clean:
-	rm -f -- ${PROG} ${OBJS} ${DEPS} pathfind pathfind.o
+	rm -f -- ${PROG} ${OBJS} ${DEPS} pathfind-demo
 
 -include *.d

@@ -1,6 +1,6 @@
 *.o
 roguelike
-pathfind
+pathfind-demo
 *.core
 *.d
 Makefile.configure
