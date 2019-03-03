@@ -217,7 +217,7 @@ are_coordinate_reachable(struct level *l, struct coordinate *start, struct coord
 	}
 	/* Find the target destination in the coordqueue */
 	found = -1;
-	for (int elem = cq.queuez; elem >= 0; elem--) {
+	for (int elem = cq.queuez - 1; elem >= 0; elem--) {
 		int y, x;
 
 		y = cq.queue[elem].y;
