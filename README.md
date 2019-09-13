@@ -10,7 +10,7 @@ This is an early stage implementation of a classic roguelike.
 
 ## Install
 
-#### Requires
+### Requires
 
 * C compiler ;
 * A curse implementation such as ncurses.
