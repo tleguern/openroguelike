@@ -21,6 +21,10 @@ PATHFINDDEMOOBJS= pathfind-demo.o ui.o level.o rng.o options.o compats.o pathfin
 pathfind-demo: ${PATHFINDDEMOOBJS}
 	${CC} ${LDFLAGS} -o $@ ${PATHFINDDEMOOBJS} ${LDADD}
 
+LEVELVIEWOBJS= level-view.o ui.o level.o rng.o options.o compats.o pathfind.o cave.o
+level-view: ${LEVELVIEWOBJS}
+	${CC} ${LDFLAGS} -o $@ ${LEVELVIEWOBJS} ${LDADD}
+
 clean:
 	rm -f -- ${PROG} ${OBJS} ${DEPS} pathfind-demo
 

@@ -1,6 +1,7 @@
 *.o
 roguelike
 pathfind-demo
+level-view
 *.core
 *.d
 Makefile.configure
