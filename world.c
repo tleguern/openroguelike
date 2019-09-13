@@ -35,10 +35,11 @@ world_init(struct world *w)
 	/* The first level is the fixed entrance */
 	log_debug("Generate the first level\n");
 	w->levels[0] = calloc(1, sizeof(struct level));
-	level_init(w->levels[0]);
-	cave_gen(w->levels[0]);
-	level_load(w->levels[0], "misc/entry");
-	level_add_stairs(w->levels[0], false, true);
+	do {
+		level_init(w->levels[0]);
+		cave_gen(w->levels[0]);
+		level_load(w->levels[0], "misc/entry");
+	} while (-1 == level_add_stairs(w->levels[0], false, true));
 	w->levels[0]->entrymessage = strdup("You enter the Goblin's Caves");
 	/* Generate three random caves */
 	log_debug("Generate three random caves\n");

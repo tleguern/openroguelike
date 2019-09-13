@@ -241,7 +241,7 @@ coordinate_copy(struct coordinate *dest, struct coordinate *src)
 	dest->x = src->x;
 }
 
-void
+int
 level_add_stairs(struct level *l, bool build_upstair, bool build_downstair)
 {
 	struct coordinate upstair, downstair;
@@ -295,7 +295,12 @@ level_add_stairs(struct level *l, bool build_upstair, bool build_downstair)
 		if (build_downstair)
 			l->tile[downstair.y][downstair.x].type = T_DOWNSTAIR;
 		break;
-	} while (1);
+	} while (count < 50);
+	if (count == 50) {
+		log_debug("Can't generate stairs for this level\n");
+		return(-1);
+	}
+	return(0);
 }
 
 int

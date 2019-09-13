@@ -64,7 +64,7 @@ void tile_print(struct tile *, int, int);
 void level_init(struct level *);
 void level_load(struct level *, const char *);
 void level_draw(struct level *);
-void level_add_stairs(struct level *, bool, bool);
+int level_add_stairs(struct level *, bool, bool);
 int level_find(struct level *, enum tile_type, struct coordinate *);
 
 void cave_gen(struct level *);
