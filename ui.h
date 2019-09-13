@@ -36,5 +36,8 @@ int ui_get_lines(void);
 int ui_get_cols(void);
 void ui_pause(time_t, long);
 
+void log_open(const char *);
+void log_debug(const char *, ...);
+void log_close(void);
 #endif
 

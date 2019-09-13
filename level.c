@@ -246,6 +246,7 @@ level_add_stairs(struct level *l, bool build_upstair, bool build_downstair)
 {
 	struct coordinate upstair, downstair;
 	struct coordinate existing_upstair, existing_downstair;
+	int count = 0;
 
 	coordinate_init(&existing_upstair);
 	coordinate_init(&existing_downstair);
@@ -258,16 +259,20 @@ level_add_stairs(struct level *l, bool build_upstair, bool build_downstair)
 			if (l->tile[y][x].type == T_UPSTAIR) {
 				existing_upstair.y = y;
 				existing_upstair.x = x;
+				log_debug("Found upward stairs\n");
 			}
 			if (l->tile[y][x].type == T_DOWNSTAIR) {
 				existing_downstair.y = y;
 				existing_downstair.x = x;
+				log_debug("Found downward stairs\n");
 			}
 		}
 	}
 	coordinate_copy(&upstair, &existing_upstair);
 	coordinate_copy(&downstair, &existing_downstair);
 	do {
+		log_debug("Try to add stairs (%i)\n", count);
+		count += 1;
 		if (-1 == existing_upstair.y)
 			upstair.y = rng_rand_uniform(MAXROWS);
 		if (-1 == existing_upstair.x)

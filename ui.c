@@ -419,3 +419,34 @@ ui_pause(time_t sec, long nsec)
 	t.tv_nsec = nsec;
 	(void)nanosleep(&t, NULL);
 }
+
+static FILE *debug;
+
+void
+log_open(const char *path)
+{
+	if (NULL == (debug = fopen(path, "w+"))) {
+		fprintf(stderr, "Too bad\n");
+	}
+}
+
+void
+log_debug(const char *str, ...)
+{
+	va_list ap;
+
+	if (NULL != debug) {
+		va_start(ap, str);
+		vfprintf(debug, str, ap);
+		va_end(ap);
+		fflush(debug);
+	}
+}
+
+void
+log_close(void)
+{
+	(void)fclose(debug);
+	debug = NULL;
+}
+

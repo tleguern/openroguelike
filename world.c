@@ -21,6 +21,7 @@
 
 #include "creature.h"
 #include "level.h"
+#include "ui.h"
 #include "rng.h"
 #include "world.h"
 
@@ -32,6 +33,7 @@ world_init(struct world *w)
 	w->creaturesz = 3;
 	w->levels = calloc(w->levelsz, sizeof(struct level *));
 	/* The first level is the fixed entrance */
+	log_debug("Generate the first level\n");
 	w->levels[0] = calloc(1, sizeof(struct level));
 	level_init(w->levels[0]);
 	cave_gen(w->levels[0]);
@@ -39,6 +41,7 @@ world_init(struct world *w)
 	level_add_stairs(w->levels[0], false, true);
 	w->levels[0]->entrymessage = strdup("You enter the Goblin's Caves");
 	/* Generate three random caves */
+	log_debug("Generate three random caves\n");
 	for (int32_t i = 1; i < w->levelsz - 1; i++) {
 		w->levels[i] = calloc(1, sizeof(struct level));
 		level_init(w->levels[i]);
@@ -46,6 +49,7 @@ world_init(struct world *w)
 		level_add_stairs(w->levels[i], true, true);
 	}
 	/* The final level is the fixed hall room of Goblin King */
+	log_debug("Generate the Goblin King's room\n");
 	w->levels[w->levelsz - 1] = calloc(1, sizeof(struct level));
 	level_init(w->levels[w->levelsz - 1]);
 	cave_gen(w->levels[w->levelsz - 1]);
@@ -54,6 +58,7 @@ world_init(struct world *w)
 	level_load(w->levels[w->levelsz - 1], "misc/hall");
 	level_add_stairs(w->levels[w->levelsz - 1], true, false);
 
+	log_debug("--- creature (goblins) ---\n");
 	w->creatures = calloc(w->creaturesz, sizeof(struct creature *));
 	for (int32_t i = 0; i < w->creaturesz; i++) {
 		w->creatures[i] = calloc(1, sizeof(struct creature));

@@ -40,9 +40,7 @@ static void usage(void);
 
 static const char *filename = ".roguelikerc";
 
-int debug = false;
-
-static void
+static int
 config_file_read(const char *configfile)
 {
 	size_t		 linez = 0;
@@ -50,8 +48,11 @@ config_file_read(const char *configfile)
 	char		*line = NULL;
 	FILE		*s;
 
+	log_debug("--- Configuration file ---\n");
+	log_debug("Reading configuration file %s\n", configfile);
 	if (NULL == (s = fopen(configfile, "r"))) {
-		return;
+		log_debug("Can't open, aborting\n");
+		return(-1);
 	}
 	while (-1 != (linelen = getline(&line, &linez, s))) {
 		char *linep, *key, *value;
@@ -67,48 +68,58 @@ config_file_read(const char *configfile)
 		if (strlen(linep) == 0)
 			continue;
 		key = strsep(&linep, ":");
-		if (NULL == linep)
-			errx(EXIT_FAILURE, "bad line -- %s", line);
+		if (NULL == linep) {
+			log_debug("bad line -- %s\n", line);
+			free(line);
+			return(-1);
+		}
 		value = linep;
 		while (' ' == value[0] || '\t' == value[0]) {
 			value++;
 		}
 		for (int i = 0; i < O__MAX; i++) {
-			if (strcmp(optionsmap[i].name, key) == 0) {
-				if (strcmp(value, "true") == 0) {
-					optionsmap[i].value = true;
-				} else if (strcmp(value, "false") == 0) {
-					optionsmap[i].value = false;
-				} else {
-					errx(EXIT_FAILURE,
-					    "option %s has wrong value -- %s",
-					    key, value);
-				}
-				found = 1;
-				break;
+			if (strcmp(optionsmap[i].name, key) != 0) {
+				continue;
 			}
+			if (strcmp(value, "true") == 0) {
+				optionsmap[i].value = true;
+			} else if (strcmp(value, "false") == 0) {
+				optionsmap[i].value = false;
+			} else {
+				log_debug("option %s has wrong value -- %s\n",
+				    key, value);
+				free(line);
+				return(-1);
+			}
+			found = 1;
+			log_debug("Found option %s=%s\n", key, value);
+			break;
 		}
 		if (found == 1)
 			continue;
 		for (int i = NONCONFIGURABLEKEYS; i < K__MAX; i++) {
-			if (strcmp(keybindingsmap[i].name, key) == 0) {
-				if (strlen(value) > 1) {
-					errx(EXIT_FAILURE,
-					    "key %s has wrong value -- %s",
-					    key, value);
-				}
-				keybindingsmap[i].key = value[0];
+			if (strcmp(keybindingsmap[i].name, key) != 0) {
+				continue;
 			}
+			if (strlen(value) > 1) {
+				log_debug("key %s has wrong value -- %s\n",
+				    key, value);
+				free(line);
+				return(-1);
+			}
+			keybindingsmap[i].key = value[0];
 		}
 	}
 	free(line);
 	line = NULL;
+	return(0);
 }
 
 int
 main(int argc, char *argv[])
 {
 	int		 ch, is_running;
+	bool		 debug = false;
 	uint32_t	 seed;
 	glob_t		 gl;
 	char		 path[PATH_MAX];
@@ -141,6 +152,10 @@ main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
+	if (true == debug) {
+		log_open("debug.log");
+	}
+
 	if (NULL == configfile) {
 		pw = getpwuid(getuid());
 		snprintf(path, sizeof(path), "%s/%s", pw->pw_dir, filename);
@@ -149,9 +164,14 @@ main(int argc, char *argv[])
 		snprintf(path, sizeof(path), "%s", gl.gl_pathv[0]);
 		globfree(&gl);
 	}
-	config_file_read(path);
+	if (-1 == config_file_read(path)) {
+		goto exit;
+	}
 
+	log_debug("--- rng ---\n");
 	rng_init();
+	log_debug("Seed is %li\n", rng_get_seed());
+	log_debug("--- ui ---\n");
 	ui_init();
 	/* Check for 23 because of ripoffline */
 	if ((ui_get_lines() < 23) || (ui_get_cols() < 80)) {
@@ -159,14 +179,17 @@ main(int argc, char *argv[])
 		fprintf(stderr, "must be displayed on 80x24 screen.");
 		fprintf(stderr, "LINES: %i, COLS: %i\n",
 		    ui_get_lines(), ui_get_cols());
-		return(1);
+		goto exit;
 	}
 
 	is_running = -1;
+	log_debug("--- world ---\n");
 	world_init(&w);
 	lp = world_first(&w);
+	log_debug("--- creature (hero) ---\n");
 	creature_init(&p, R_HUMAN);
 	creature_place_at_stair(&p, lp, true);
+	log_debug("--- start game ---\n");
 	do {
 		int key, noaction;
 
@@ -301,6 +324,8 @@ main(int argc, char *argv[])
 			ui_pause(0, 100);
 		}
 	} while (1);
+exit:
+	log_close();
 	world_free(&w);
 	ui_cleanup();
 	return(0);
