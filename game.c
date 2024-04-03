@@ -28,6 +28,8 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #include "level.h"
 #include "ui.h"
@@ -39,6 +41,24 @@
 static void usage(void);
 
 static const char *filename = ".roguelikerc";
+
+static int
+default_config_file(void) {
+	struct stat stbuf;
+	int success;
+
+	/* Check whether the .roguelikerc file exist. */
+	success = stat(filename, &stbuf);
+
+	if (success == -1) {
+		log_debug("--- Default configuration file ---\n");
+		log_debug("%s: %s\n", filename, strerror(errno));
+		/* Colors are turned on by default. */
+		optionsmap[O_COLORS].value = true;
+	}
+
+	return success;
+}
 
 static int
 config_file_read(const char *configfile)
@@ -157,15 +177,26 @@ main(int argc, char *argv[])
 	}
 
 	if (NULL == configfile) {
-		pw = getpwuid(getuid());
-		snprintf(path, sizeof(path), "%s/%s", pw->pw_dir, filename);
+
+		if (default_config_file() == 0) {
+			pw = getpwuid(getuid());
+			snprintf(path, sizeof(path), "%s/%s", pw->pw_dir, filename);
+
+			if (-1 == config_file_read(path)) {
+				goto exit;
+			}
+
+		}
+
 	} else {
 		glob(configfile, GLOB_NOCHECK | GLOB_TILDE, NULL, &gl);
 		snprintf(path, sizeof(path), "%s", gl.gl_pathv[0]);
 		globfree(&gl);
-	}
-	if (-1 == config_file_read(path)) {
-		goto exit;
+
+		if (-1 == config_file_read(path)) {
+			goto exit;
+		}
+
 	}
 
 	log_debug("--- rng ---\n");
