@@ -28,10 +28,37 @@
 static WINDOW *messagewin;
 
 static void ui_reset_colors(void);
-static void ui_reset_tileset(void);
 static int  ui_set_message_window(WINDOW *, int);
 
-static chtype tileset[T__MAX];
+static chtype ui_tile_type_to_glyph(enum tile_type tile) {
+	chtype glyph;
+
+	switch (tile) {
+		case T_EMPTY:
+			glyph = ' ';
+			break;
+		case T_WALL:
+			glyph = '#';
+			break;
+		case T_UPSTAIR:
+			glyph = '<';
+			break;
+		case T_DOWNSTAIR:
+			glyph = '>';
+			break;
+		case T_GOBLIN:
+			glyph = 'g' | COLOR_PAIR(5);
+			break;
+		case T_HUMAN:
+			glyph = '@' | COLOR_PAIR(2);
+			break;
+		default:
+			glyph = '?' | COLOR_PAIR(3);
+			break;
+	};
+
+	return glyph;
+}
 
 void
 ui_cleanup(void)
@@ -42,24 +69,24 @@ ui_cleanup(void)
 
 static void
 ui_tile_print(struct tile *t, int x, int y) {
-	mvaddch(y, x, tileset[t->type]);
+	mvaddch(y, x, ui_tile_type_to_glyph(t->type));
 	if (NULL != t->creature) {
-		int glyphe;
+		int glyph;
 
 		switch (t->creature->race) {
 		case R_GOBLIN:
-			glyphe = tileset[T_GOBLIN];
+			glyph = ui_tile_type_to_glyph(T_GOBLIN);
 			break;
 		case R_HUMAN:
-			glyphe = tileset[T_HUMAN];
+			glyph = ui_tile_type_to_glyph(T_HUMAN);
 			break;
 		case R__MAX:
 		default:
-			/* Visual error meaning I forgot to assign a glyphe */
-			glyphe = 'X' | COLOR_PAIR(3);
+			/* Visual error meaning I forgot to assign a glyph */
+			glyph = 'X' | COLOR_PAIR(3);
 			break;
 		}
-		mvaddch(y, x, glyphe);
+		mvaddch(y, x, glyph);
 	}
 }
 
@@ -100,7 +127,6 @@ ui_init(void)
 	if (has_colors() == FALSE)
 		return;
 	ui_reset_colors();
-	ui_reset_tileset();
 	redrawwin(stdscr);
 }
 
@@ -281,17 +307,6 @@ ui_reset_colors(void)
 		init_pair(4, COLOR_WHITE, COLOR_BLACK);
 		init_pair(5, COLOR_WHITE, COLOR_BLACK);
 	}
-}
-
-static void
-ui_reset_tileset(void)
-{
-	tileset[T_EMPTY] = ' ';
-	tileset[T_WALL] = '#';
-	tileset[T_UPSTAIR] = '<';
-	tileset[T_DOWNSTAIR] = '>';
-	tileset[T_GOBLIN] = 'g' | COLOR_PAIR(5);
-	tileset[T_HUMAN] = '@' | COLOR_PAIR(2);
 }
 
 void
