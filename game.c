@@ -356,7 +356,9 @@ main(int argc, char *argv[])
 		}
 	} while (1);
 exit:
-	log_close();
+	if (true == debug) {
+		log_close();
+	}
 	world_free(&w);
 	ui_cleanup();
 	return(0);
