@@ -56,6 +56,7 @@ enum keybinding {
 	K_LOOKELSEWHERE,
 	K_HELPMENU,
 	K_OPTIONMENU,
+	K_QUIT,
 	K__MAX,
 };
 

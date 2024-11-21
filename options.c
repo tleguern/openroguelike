@@ -48,6 +48,7 @@ struct keybindingsmap keybindingsmap[] = {
 	{"look elsewhere",	';'},
 	{"show help menu",	'?'},
 	{"show options menu",	'O'},
+	{"quit",		'Q'},
 };
 
 enum keybinding

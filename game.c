@@ -329,6 +329,8 @@ main(int argc, char *argv[])
 				ui_draw(lp);
 				noaction = -1;
 				break;
+			case K_QUIT:
+				goto exit;
 			default:
 				noaction = -1;
 				break;
