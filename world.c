@@ -25,6 +25,9 @@
 #include "rng.h"
 #include "world.h"
 
+#define ENTRY_MSG	"You enter the Goblin's Caves"
+
+
 void
 world_init(struct world *w)
 {
@@ -40,7 +43,7 @@ world_init(struct world *w)
 		cave_gen(w->levels[0]);
 		level_load(w->levels[0], "misc/entry");
 	} while (-1 == level_add_stairs(w->levels[0], false, true));
-	w->levels[0]->entrymessage = strdup("You enter the Goblin's Caves");
+	w->levels[0]->entrymessage = (char *)ENTRY_MSG;
 	/* Generate three random caves */
 	log_debug("Generate three random caves\n");
 	for (int32_t i = 1; i < w->levelsz - 1; i++) {
@@ -54,8 +57,7 @@ world_init(struct world *w)
 	w->levels[w->levelsz - 1] = calloc(1, sizeof(struct level));
 	level_init(w->levels[w->levelsz - 1]);
 	cave_gen(w->levels[w->levelsz - 1]);
-	w->levels[w->levelsz - 1]->entrymessage =
-	    strdup("Unwelcome to the Hall of the Goblin King");
+	w->levels[w->levelsz - 1]->entrymessage = (char *)ENTRY_MSG;
 	level_load(w->levels[w->levelsz - 1], "misc/hall");
 	level_add_stairs(w->levels[w->levelsz - 1], true, false);
 

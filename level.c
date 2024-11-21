@@ -57,7 +57,8 @@ string_to_coordinate(char *src, struct coordinate *c)
 	char		*x, *y;
 	const char	*errstr;
 
-	y = strsep(&src, " ");
+	y = src;
+	strsep(&src, " ");
 	x = src;
 	errstr = NULL;
 	c->y = (int)strtonum(y, 0, MAXROWS, &errstr);
@@ -128,10 +129,11 @@ level_load(struct level *l, const char *filename)
 
 		line[linelen - 1] = '\0';
 		linep = line;
-		if (NULL == (key = strsep(&linep, ":"))) {
+		if (strsep(&linep, ":") == NULL) {
 			errstr = "malformed line";
 			goto closeclean;
 		}
+		key = line;
 		for (op = 0; op < OP__MAX; op++) {
 			if (strcmp(operandmaps[op], key) == 0) {
 				break;
