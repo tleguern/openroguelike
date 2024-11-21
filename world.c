@@ -26,6 +26,7 @@
 #include "world.h"
 
 #define ENTRY_MSG	"You enter the Goblin's Caves"
+#define END_MSG		"Unwelcome to the Hall of the Goblin King"
 
 
 void
@@ -57,7 +58,7 @@ world_init(struct world *w)
 	w->levels[w->levelsz - 1] = calloc(1, sizeof(struct level));
 	level_init(w->levels[w->levelsz - 1]);
 	cave_gen(w->levels[w->levelsz - 1]);
-	w->levels[w->levelsz - 1]->entrymessage = (char *)ENTRY_MSG;
+	w->levels[w->levelsz - 1]->entrymessage = (char *)END_MSG;
 	level_load(w->levels[w->levelsz - 1], "misc/hall");
 	level_add_stairs(w->levels[w->levelsz - 1], true, false);
 
@@ -102,7 +103,6 @@ void
 world_free(struct world *w)
 {
 	for (int32_t i = 0; i < w->levelsz; i++) {
-		free(w->levels[i]->entrymessage);
 		free(w->levels[i]);
 		w->levels[i] = NULL;
 	}
