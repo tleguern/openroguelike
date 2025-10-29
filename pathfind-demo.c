@@ -24,6 +24,7 @@
 #include "level.h"
 #include "pathfind.h"
 #include "ui.h"
+#include "config.h"
 
 static void usage(void);
 
