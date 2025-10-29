@@ -157,6 +157,8 @@ level_load(struct level *l, const char *filename)
 		case OP_TYPE:
 			if (strcmp("cave", value) == 0) {
 				l->type = L_CAVE;
+			} else if (strcmp("maze", value) == 0) {
+				l->type = L_MAZE;
 			} else if (strcmp("static", value) == 0) {
 				l->type = L_STATIC;
 			} else {
@@ -321,3 +323,28 @@ level_find(struct level *l, enum tile_type tile, struct coordinate *coord)
 	coord->x = -1;
 	return(-1);
 }
+
+void
+level_clear(struct level *l, enum level_type type) {
+	int x, y;
+
+	l->type = type;
+
+	for (y = 0; y < MAXROWS; ++y) {
+		l->tile[y][0].type = T_WALL;
+		l->tile[y][MAXCOLS - 1].type = T_WALL;
+	}
+
+	for (x = 0; x < MAXCOLS; ++x) {
+		l->tile[0][x].type = T_WALL;
+		l->tile[MAXROWS - 1][x].type = T_WALL;
+	}
+
+}
+
+static enum tile_type
+rand_pick(unsigned int ratio) {
+	unsigned int x = rng_rand_uniform(100);
+	return (x < ratio) ? T_WALL : T_EMPTY;
+}
+

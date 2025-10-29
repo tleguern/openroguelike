@@ -28,6 +28,21 @@
 #define ENTRY_MSG	"You enter the Goblin's Caves"
 #define END_MSG		"Unwelcome to the Hall of the Goblin King"
 
+void world_level_gen(struct level *l) {
+	int levelType = rng_rand_uniform(100);
+
+	do {
+		level_init(l);
+
+		if (levelType < 20) {
+			maze_gen(l);
+		} else {
+			cave_gen(l);
+		}
+
+	} while (level_add_stairs(l, true, true) == -1);
+
+}
 
 void
 world_init(struct world *w)
@@ -45,13 +60,11 @@ world_init(struct world *w)
 		level_load(w->levels[0], "misc/entry");
 	} while (-1 == level_add_stairs(w->levels[0], false, true));
 	w->levels[0]->entrymessage = (char *)ENTRY_MSG;
-	/* Generate three random caves */
-	log_debug("Generate three random caves\n");
+	/* Generate three random levels */
+	log_debug("Generate three random levels\n");
 	for (int32_t i = 1; i < w->levelsz - 1; i++) {
 		w->levels[i] = calloc(1, sizeof(struct level));
-		level_init(w->levels[i]);
-		cave_gen(w->levels[i]);
-		level_add_stairs(w->levels[i], true, true);
+		world_level_gen(w->levels[i]);
 	}
 	/* The final level is the fixed hall room of Goblin King */
 	log_debug("Generate the Goblin King's room\n");

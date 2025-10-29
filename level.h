@@ -41,6 +41,7 @@ struct tile {
 enum level_type {
 	L_NONE,
 	L_CAVE,
+	L_MAZE,
 	L_STATIC,
 	L__MAX,
 };
@@ -66,10 +67,14 @@ void level_load(struct level *, const char *);
 void level_draw(struct level *);
 int level_add_stairs(struct level *, bool, bool);
 int level_find(struct level *, enum tile_type, struct coordinate *);
+void level_clear(struct level *l, enum level_type type);
+
 
 void cave_gen(struct level *);
+void maze_gen(struct level *);
 
 void coordinate_copy(struct coordinate *, struct coordinate *);
 void coordinate_init(struct coordinate *);
 
 #endif
+

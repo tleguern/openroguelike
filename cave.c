@@ -72,21 +72,12 @@ static void
 cave_init(struct level *l) {
 	int x, y;
 
-	l->type = L_CAVE;
 	/* randomly fill the map */
 	for (y = 1; y < MAXROWS - 1; ++y)
 		for (x = 1; x < MAXCOLS - 1; ++x)
 			l->tile[y][x].type = rand_pick(cave_ratio);
 
-	for (y = 0; y < MAXROWS; ++y) {
-		l->tile[y][0].type = T_WALL;
-		l->tile[y][MAXCOLS - 1].type = T_WALL;
-	}
-
-	for (x = 0; x < MAXCOLS; ++x) {
-		l->tile[0][x].type = T_WALL;
-		l->tile[MAXROWS - 1][x].type = T_WALL;
-	}
+	level_clear(l, L_CAVE);
 }
 
 static enum tile_type

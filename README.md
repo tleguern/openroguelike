@@ -5,7 +5,7 @@ This is an early stage implementation of a classic roguelike.
 ## Contents
 
 1. [Install](#install)
-2. [Instructions](#instruction)
+2. [Instructions](#instructions)
 3. [License](#license)
 
 ## Install
