@@ -189,7 +189,11 @@ main(int argc, char *argv[])
 		}
 
 	} else {
+#ifdef GLOB_TILDE
 		glob(configfile, GLOB_NOCHECK | GLOB_TILDE, NULL, &gl);
+#else
+		glob(configfile, GLOB_NOCHECK, NULL, &gl);
+#endif
 		snprintf(path, sizeof(path), "%s", gl.gl_pathv[0]);
 		globfree(&gl);
 
